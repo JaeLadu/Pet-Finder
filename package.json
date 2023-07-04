@@ -1,0 +1,13 @@
+{
+   "name": "desafio-pet-finder",
+   "version": "1.0.0",
+   "main": "index.js",
+   "license": "MIT",
+   "scripts": {
+      "dev:front": "parcel serve ./frontend/src/index.html"
+   },
+   "dependencies": {
+      "parcel": "^2.9.3",
+      "typescript": "^5.1.6"
+   }
+}
