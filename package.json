@@ -7,6 +7,8 @@
       "dev:front": "parcel serve ./frontend/src/index.html"
    },
    "dependencies": {
+      "@vaadin/router": "^1.7.5",
+      "cloudinary": "^1.37.3",
       "parcel": "^2.9.3",
       "typescript": "^5.1.6"
    }
