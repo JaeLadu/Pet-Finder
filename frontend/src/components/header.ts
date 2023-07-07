@@ -17,29 +17,35 @@ function initHeader() {
             "header__menu-button"
          );
          headerMenuButton.textContent = "menu";
+         headerMenuButton.addEventListener("click", (e) => {
+            this.append(menuEl);
+         });
+
+         const menuEl = document.createElement("menu-comp");
 
          const styleEl = document.createElement("style");
          styleEl.textContent = /*css*/ `
             header{
-                border-radius: 0px 0px 10px 10px;
-                background-color: #26302E;    
-                width: 100%;
-                height: 60px;
-                display:flex;
-                align-items: center;
-                justify-content: space-between;
-                padding: 10px 18px;
+               border-radius: 0px 0px 10px 10px;
+               background-color: #26302E;    
+               width: 100%;
+               height: 60px;
+               display:flex;
+               align-items: center;
+               justify-content: space-between;
+               padding: 10px 18px;
 
             }
             .material-symbols-outlined {
-                font-variation-settings:
-                'FILL' 0,
-                'wght' 400,
-                'GRAD' 0,
-                'opsz' 48
+               font-variation-settings:
+               'FILL' 0,
+               'wght' 400,
+               'GRAD' 0,
+               'opsz' 48
             }
-            .header__menu-button{
-                font-size:40px
+         .header__menu-button{
+               font-size:40px;
+               color:#fff;
             }
          `;
 
