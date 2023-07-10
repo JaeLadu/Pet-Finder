@@ -5,14 +5,17 @@ function initCaption() {
       }
 
       connectedCallback() {
+         const shadow = this.attachShadow({ mode: "open" });
          const captionEl = document.createElement("span");
          captionEl.textContent = this.getAttribute("text") || "Títutlo";
          captionEl.classList.add("caption");
 
+         const color = this.getAttribute("color");
+
          const style = document.createElement("style");
          style.textContent = /*css*/ `
          .caption{
-            color: #000;
+            color: ${color || "#000"};
             font-family: Poppins;
             font-size: 16px;
             font-style: normal;
@@ -22,7 +25,7 @@ function initCaption() {
             }
          `;
 
-         this.append(captionEl, style);
+         shadow.append(captionEl, style);
       }
    }
    customElements.define("caption-comp", Caption);

@@ -5,6 +5,7 @@ function initSubtitle() {
       }
 
       connectedCallback() {
+         const shadow = this.attachShadow({ mode: "open" });
          const subtitleEl = document.createElement("h3");
          subtitleEl.classList.add("subtitle");
          subtitleEl.textContent = this.getAttribute("text") || "Subtítulo";
@@ -22,9 +23,10 @@ function initSubtitle() {
             font-style: normal;
             font-weight: ${bold ? 700 : 400};
             line-height: normal;
+            margin: 0;
          }
         `;
-         this.append(subtitleEl, style);
+         shadow.append(subtitleEl, style);
       }
    }
    customElements.define("subtitle-comp", Subtitle);

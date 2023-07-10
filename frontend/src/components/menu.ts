@@ -59,7 +59,6 @@ function initMenu() {
                display:flex;
                flex-direction:column;
                gap:60px;
-               /* justify-content:space-between; */
             }
             li{
                list-style: none;

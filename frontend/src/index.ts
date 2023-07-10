@@ -1,3 +1,5 @@
+import { initBodyText } from "./components/body-text";
+import { initButton } from "./components/button";
 import { initCaption } from "./components/caption";
 import { initHeader } from "./components/header";
 import { initLink } from "./components/link";
@@ -15,6 +17,8 @@ import { initRouter } from "./router";
    initSubtitle();
    initCaption();
    initLink();
+   initBodyText();
+   initButton();
    // --Pages initiators--
    initHomePage();
    // --Router--

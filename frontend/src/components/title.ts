@@ -5,6 +5,7 @@ function initTitle() {
       }
 
       connectedCallback() {
+         const shadow = this.attachShadow({ mode: "open" });
          const titleEl = document.createElement("h1");
          titleEl.textContent = this.getAttribute("text") || "Títutlo";
          titleEl.classList.add("title");
@@ -21,10 +22,11 @@ function initTitle() {
              font-style: normal;
              font-weight: 700;
              line-height: normal;
+             margin: 0;
             }
          `;
 
-         this.append(titleEl, style);
+         shadow.append(titleEl, style);
       }
    }
    customElements.define("title-comp", Title);
