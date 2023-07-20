@@ -16,6 +16,7 @@ function initMenu() {
          closeEl.textContent = "close";
          closeEl.addEventListener("click", (e) => {
             this.remove();
+            this.innerHTML = "";
          });
 
          const linksContainerEl = document.createElement("ul");
@@ -42,6 +43,7 @@ function initMenu() {
                right: 0px;
                bottom: 150px;
                left: 50px;
+               z-index: 3;
                padding: 25px;
                border-radius: 0px 0px 10px 10px;
                background-color: #26302E;

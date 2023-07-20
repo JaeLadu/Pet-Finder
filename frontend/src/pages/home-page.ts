@@ -1,4 +1,4 @@
-import { isEmptyBindingElement } from "typescript";
+import { Router } from "@vaadin/router";
 
 function initHomePage() {
    class HomePage extends HTMLElement {
@@ -33,7 +33,7 @@ function initHomePage() {
          primaryButtonEl.setAttribute("text-color", "#fff");
          primaryButtonEl.addEventListener("click", (e) => {
             e.preventDefault();
-            console.log("Botón primario");
+            Router.go("/choose-location");
          });
 
          const secondaryButtonEl = document.createElement("button-comp");
@@ -43,7 +43,7 @@ function initHomePage() {
          secondaryButtonEl.setAttribute("text-color", "#fff");
          secondaryButtonEl.addEventListener("click", (e) => {
             e.preventDefault();
-            console.log("Botón secundario");
+            Router.go("/");
          });
 
          const style = document.createElement("style");

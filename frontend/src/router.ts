@@ -12,6 +12,10 @@ function initRouter() {
          path: "/",
          component: "home-page",
       },
+      {
+         path: "/choose-location",
+         component: "choose-location-page",
+      },
    ]);
 }
 export { initRouter };

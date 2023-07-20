@@ -7,7 +7,7 @@ const environment = process.env.ENVIRONMENT;
 app.use(json());
 
 app.get("/up", (req, res) => {
-   res.send(`Server up and running in ${environment} mode bitch`);
+   res.send(`Server up and running in ${environment} mode`);
 });
 
 app.listen(port, () => {

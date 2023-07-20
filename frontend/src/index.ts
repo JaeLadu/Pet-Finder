@@ -6,6 +6,7 @@ import { initLink } from "./components/link";
 import { initMenu } from "./components/menu";
 import { initSubtitle } from "./components/subtitle";
 import { initTitle } from "./components/title";
+import { initChooseLocationPage } from "./pages/choose-location-page";
 import { initHomePage } from "./pages/home-page";
 import { initRouter } from "./router";
 
@@ -21,6 +22,7 @@ import { initRouter } from "./router";
    initButton();
    // --Pages initiators--
    initHomePage();
+   initChooseLocationPage();
    // --Router--
    initRouter();
 })();
