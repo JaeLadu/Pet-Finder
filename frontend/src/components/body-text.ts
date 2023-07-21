@@ -11,7 +11,7 @@ function initBodyText() {
 
          const bodyTextEl = document.createElement("span");
          bodyTextEl.classList.add("body-text");
-         bodyTextEl.textContent = text || "Texto de body";
+         bodyTextEl.innerHTML = text || "Texto de body";
 
          const styleEl = document.createElement("style");
          styleEl.textContent = /*css*/ `

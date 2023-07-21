@@ -1,4 +1,5 @@
 import { Router } from "@vaadin/router";
+import { state } from "../state";
 
 function initHomePage() {
    class HomePage extends HTMLElement {
@@ -7,7 +8,18 @@ function initHomePage() {
       }
       connectedCallback() {
          const headerEl = document.createElement("header-comp");
+         this.append(headerEl);
 
+         //chequea si hay info sobre la ubicación del usuario, si hay, renderiza una página, sino otra
+         const location = state.getUserLocation();
+         if (location) this.locationRender();
+         else {
+            this.defaultRender();
+         }
+      }
+
+      //página a renderizar si NO hay info sobre la ubicación del usuario disponible
+      defaultRender = () => {
          const contentContainerEl = document.createElement("div");
          contentContainerEl.classList.add("container");
 
@@ -59,7 +71,7 @@ function initHomePage() {
             button-comp{
                width:100%
             }
-         `;
+            `;
 
          contentContainerEl.append(
             imgEl,
@@ -68,8 +80,31 @@ function initHomePage() {
             primaryButtonEl,
             secondaryButtonEl
          );
-         this.append(headerEl, contentContainerEl, style);
-      }
+         this.append(contentContainerEl, style);
+      };
+
+      //página a renderizar si hay info sobre la ubicación del usuario disponible
+      locationRender = () => {
+         const subtitleEl = document.createElement("subtitle-comp");
+         subtitleEl.setAttribute("text", "Mascotas perdidas cerca");
+         subtitleEl.setAttribute("bold", "true");
+
+         //acá va la magia que habla con el back y trae toda la data de las mascotas que estén cerca, casi seguro que en un array
+         //mock
+         const pet = {
+            image: "https://res.cloudinary.com/dxdihjprh/image/upload/v1688831887/pet-finder/incwm1zpjwpeczovbz8x.png",
+            name: "Branca",
+            location: [-31.420757339613516, -64.52347101972522],
+            area: "Villa Carlos Paz",
+         };
+
+         const petCardEl = document.createElement("pet-card-comp");
+         petCardEl.setAttribute("img", pet.image);
+         petCardEl.setAttribute("name", pet.name);
+         petCardEl.setAttribute("location", pet.area);
+
+         this.append(subtitleEl, petCardEl);
+      };
    }
 
    customElements.define("home-page", HomePage);
