@@ -91,19 +91,55 @@ function initHomePage() {
 
          //acá va la magia que habla con el back y trae toda la data de las mascotas que estén cerca, casi seguro que en un array
          //mock
-         const pet = {
-            image: "https://res.cloudinary.com/dxdihjprh/image/upload/v1688831887/pet-finder/incwm1zpjwpeczovbz8x.png",
-            name: "Branca",
-            location: [-31.420757339613516, -64.52347101972522],
-            area: "Villa Carlos Paz",
-         };
+         const pets = [
+            {
+               image: "https://res.cloudinary.com/dxdihjprh/image/upload/v1689962771/pet-finder/jw99x3jagugoxbpe87x2.png",
+               name: "El perro",
+               location: [-31.420757339613516, -64.52347101972522],
+               area: "Villa Carlos Paz",
+            },
+            {
+               image: "https://res.cloudinary.com/dxdihjprh/image/upload/v1688831887/pet-finder/incwm1zpjwpeczovbz8x.png",
+               name: "Branca",
+               location: [-31.420757339613516, -64.52347101972522],
+               area: "Villa Carlos Paz",
+               owned: "true",
+            },
+            {
+               image: "https://res.cloudinary.com/dxdihjprh/image/upload/v1688831887/pet-finder/incwm1zpjwpeczovbz8x.png",
+               name: "Tutuca",
+               location: [-31.420757339613516, -64.52347101972522],
+               area: "Villa Carlos Paz",
+               owned: "true",
+            },
+         ];
 
-         const petCardEl = document.createElement("pet-card-comp");
-         petCardEl.setAttribute("img", pet.image);
-         petCardEl.setAttribute("name", pet.name);
-         petCardEl.setAttribute("location", pet.area);
+         const petCardscontainerEl = document.createElement("div");
+         petCardscontainerEl.classList.add("cards-container");
+         pets.forEach((pet) => {
+            const petCardEl = document.createElement("pet-card-comp");
+            petCardEl.setAttribute("img", pet.image);
+            petCardEl.setAttribute("name", pet.name);
+            petCardEl.setAttribute("location", pet.area);
+            if (pet.owned) petCardEl.setAttribute("own", pet.owned);
 
-         this.append(subtitleEl, petCardEl);
+            petCardscontainerEl.append(petCardEl);
+         });
+
+         const styleEl = document.createElement("style");
+         styleEl.textContent = /*css*/ `
+            subtitle-comp{
+               margin: 25px
+            }
+            .cards-container{
+               display: flex;
+               flex-direction: column;
+               gap: 35px;
+               padding: 20px
+            }
+         `;
+
+         this.append(subtitleEl, petCardscontainerEl, styleEl);
       };
    }
 
