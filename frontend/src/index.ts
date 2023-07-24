@@ -5,6 +5,7 @@ import { initHeader } from "./components/header";
 import { initLink } from "./components/link";
 import { initMenu } from "./components/menu";
 import { initPetCard } from "./components/pet-card";
+import { initReport } from "./components/report";
 import { initSubtitle } from "./components/subtitle";
 import { initTitle } from "./components/title";
 import { initChooseLocationPage } from "./pages/choose-location-page";
@@ -22,6 +23,7 @@ import { initRouter } from "./router";
    initBodyText();
    initButton();
    initPetCard();
+   initReport();
    // --Pages initiators--
    initHomePage();
    initChooseLocationPage();

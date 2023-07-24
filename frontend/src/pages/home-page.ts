@@ -72,6 +72,11 @@ function initHomePage() {
                width:100%
             }
             `;
+         const report = document.createElement("report-comp");
+         report.setAttribute("pet", "Cobe");
+         report.addEventListener("report", (e) => {
+            console.log("report");
+         });
 
          contentContainerEl.append(
             imgEl,
@@ -80,7 +85,7 @@ function initHomePage() {
             primaryButtonEl,
             secondaryButtonEl
          );
-         this.append(contentContainerEl, style);
+         this.append(report, contentContainerEl, style);
       };
 
       //página a renderizar si hay info sobre la ubicación del usuario disponible
@@ -90,6 +95,7 @@ function initHomePage() {
          subtitleEl.setAttribute("bold", "true");
 
          //acá va la magia que habla con el back y trae toda la data de las mascotas que estén cerca, casi seguro que en un array
+
          //mock
          const pets = [
             {
@@ -139,7 +145,10 @@ function initHomePage() {
             }
          `;
 
-         this.append(subtitleEl, petCardscontainerEl, styleEl);
+         const report = document.createElement("report-comp");
+         report.setAttribute("pet", "Cobe");
+
+         this.append(report, subtitleEl, petCardscontainerEl, styleEl);
       };
    }
 
