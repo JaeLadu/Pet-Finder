@@ -72,11 +72,6 @@ function initHomePage() {
                width:100%
             }
             `;
-         const report = document.createElement("report-comp");
-         report.setAttribute("pet", "Cobe");
-         report.addEventListener("report", (e) => {
-            console.log("report");
-         });
 
          contentContainerEl.append(
             imgEl,
@@ -85,7 +80,7 @@ function initHomePage() {
             primaryButtonEl,
             secondaryButtonEl
          );
-         this.append(report, contentContainerEl, style);
+         this.append(contentContainerEl, style);
       };
 
       //página a renderizar si hay info sobre la ubicación del usuario disponible
@@ -129,6 +124,26 @@ function initHomePage() {
             petCardEl.setAttribute("location", pet.area);
             if (pet.owned) petCardEl.setAttribute("own", pet.owned);
 
+            petCardEl.addEventListener("petCardEdit", (e) => {
+               console.log("Debe ir a /editcard");
+            });
+
+            petCardEl.addEventListener(
+               "petCardReport",
+               (e: CustomEventInit) => {
+                  const report = document.createElement("report-comp");
+                  report.setAttribute("pet", pet.name);
+                  report.addEventListener("report", (e: CustomEventInit) => {
+                     console.log(
+                        `data a mandar al backend para guardar: ${JSON.stringify(
+                           e.detail
+                        )}`
+                     );
+                  });
+                  petCardscontainerEl.append(report);
+               }
+            );
+
             petCardscontainerEl.append(petCardEl);
          });
 
@@ -145,10 +160,7 @@ function initHomePage() {
             }
          `;
 
-         const report = document.createElement("report-comp");
-         report.setAttribute("pet", "Cobe");
-
-         this.append(report, subtitleEl, petCardscontainerEl, styleEl);
+         this.append(subtitleEl, petCardscontainerEl, styleEl);
       };
    }
 

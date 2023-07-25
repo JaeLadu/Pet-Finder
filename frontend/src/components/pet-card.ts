@@ -37,9 +37,27 @@ function initPetCard() {
          if (own) {
             buttonEl.setAttribute("text", "Editar");
             buttonEl.setAttribute("color", "#5A8FEC");
+            buttonEl.addEventListener("click", (e) => {
+               e.preventDefault();
+               this.dispatchEvent(
+                  new CustomEvent("petCardEdit", {
+                     bubbles: true,
+                     composed: true,
+                  })
+               );
+            });
          } else {
             buttonEl.setAttribute("text", "Reportar");
             buttonEl.setAttribute("color", "#EB6372");
+            buttonEl.addEventListener("click", (e) => {
+               e.preventDefault();
+               this.dispatchEvent(
+                  new CustomEvent("petCardReport", {
+                     bubbles: true,
+                     composed: true,
+                  })
+               );
+            });
          }
 
          const styleEl = document.createElement("style");

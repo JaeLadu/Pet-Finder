@@ -32,6 +32,8 @@ function initMap() {
    // crea el marcador/pin y agrega el listener para el evento de moverlo en el mapa
    const marker = new mapboxgl.Marker({ draggable: true });
    marker.on("dragend", (e) => {
+      //en vez de llamar directamente el state, el mapa debería despachar un evento con la info del marker
+      //para que la page lo atrape y esa sea la que manda la info al state
       state.setUserLocation(marker.getLngLat());
 
       // dispatchEvent(

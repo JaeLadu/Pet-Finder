@@ -30,15 +30,15 @@ function initReport() {
          formEl.innerHTML = /*html*/ `
             <label>
                 <caption-comp color='white' text='nombre'></caption-comp>
-                <input type="text">
+                <input name='nombre' type="text">
             </label>
             <label>
                 <caption-comp color='white' text='teléfono'></caption-comp>
-                <input type="text">
+                <input name='teléfono' type="text">
             </label>
             <label >
                 <caption-comp color='white' text='Donde lo viste?'></caption-comp>
-                <textarea></textarea>
+                <textarea name='location'></textarea>
             </label>
          `;
 
@@ -46,15 +46,14 @@ function initReport() {
          bunttonEl.setAttribute("text", "Enviar información");
          bunttonEl.setAttribute("text-color", "white");
          bunttonEl.setAttribute("color", "#00A884");
-         formEl.append(bunttonEl);
-         bunttonEl.addEventListener("submit", (e) => {
+         bunttonEl.addEventListener("click", (e) => {
             e.preventDefault();
             const formData = new FormData(formEl);
             const data = Object.fromEntries(formData.entries());
-            console.log(data);
             formEl.dispatchEvent(
                new CustomEvent("report", {
                   bubbles: true,
+                  composed: true,
                   detail: data,
                })
             );
@@ -81,27 +80,46 @@ function initReport() {
                align-self:flex-end;
             }
             .report__form{
-                display:flex;
+               display:flex;
                 flex-direction:column;
                 justify-content:space-between;
                 gap: 20px;
                 height: 100%;
                 margin-top: 20px;
-            }
+               }
             input,textarea{
-                display:block;
-                width: 100%;
-                height: 50px;
-                background-color: #4A5553;
-                border-radius: 10px;
-                border: none;
+               box-sizing:border-box;
+               display:block;
+               width: 100%;
+               min-height: 50px;
+               background-color: #4A5553;
+               border-radius: 10px;
+               border: none;
+               color: white;
+               font-family: Poppins;
+               font-size: 16px;
+               font-style: normal;
+               font-weight: 400;
+               line-height: normal;
+               text-transform: uppercase;
+               padding: 10px;
             }
             textarea{
-                height: 155px;
+               height: 155px;
             }
-        `;
-         reportEl.append(titleEl, formEl);
-         shadow.append(reportEl, style);
+            `;
+
+         //agrega el link a la hoja de estilos para que el ícono CLOSE exista dentro del shadow
+         const headEl = document.createElement("head");
+         const linkEl = document.createElement("link");
+         linkEl.rel = "stylesheet";
+         linkEl.href =
+            "https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200";
+
+         headEl.append(linkEl);
+         formEl.append(bunttonEl);
+         reportEl.append(closeEl, titleEl, formEl);
+         shadow.append(headEl, reportEl, style);
       }
    }
    customElements.define("report-comp", Report);
