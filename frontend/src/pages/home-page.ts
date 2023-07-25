@@ -89,6 +89,7 @@ function initHomePage() {
          subtitleEl.setAttribute("text", "Mascotas perdidas cerca");
          subtitleEl.setAttribute("bold", "true");
 
+         //sin terminar
          //acá va la magia que habla con el back y trae toda la data de las mascotas que estén cerca, casi seguro que en un array
 
          //mock
@@ -125,6 +126,7 @@ function initHomePage() {
             if (pet.owned) petCardEl.setAttribute("own", pet.owned);
 
             petCardEl.addEventListener("petCardEdit", (e) => {
+               //sin terminar
                console.log("Debe ir a /editcard");
             });
 
@@ -134,6 +136,7 @@ function initHomePage() {
                   const report = document.createElement("report-comp");
                   report.setAttribute("pet", pet.name);
                   report.addEventListener("report", (e: CustomEventInit) => {
+                     //sin terminar
                      console.log(
                         `data a mandar al backend para guardar: ${JSON.stringify(
                            e.detail

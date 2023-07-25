@@ -1,3 +1,5 @@
+import { Router } from "@vaadin/router";
+
 function initLink() {
    class Link extends HTMLElement {
       constructor() {
@@ -5,9 +7,15 @@ function initLink() {
       }
 
       connectedCallback() {
+         const target = this.getAttribute("target");
+
          const linkEl = document.createElement("span");
          linkEl.textContent = this.getAttribute("text") || "Link";
          linkEl.classList.add("link");
+         if (target)
+            linkEl.addEventListener("click", (e) => {
+               Router.go(target);
+            });
 
          const style = document.createElement("style");
          style.textContent = /*css*/ `

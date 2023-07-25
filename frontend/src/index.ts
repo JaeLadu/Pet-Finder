@@ -10,6 +10,11 @@ import { initSubtitle } from "./components/subtitle";
 import { initTitle } from "./components/title";
 import { initChooseLocationPage } from "./pages/choose-location-page";
 import { initHomePage } from "./pages/home-page";
+import { initLoginPage } from "./pages/login-page";
+import { initPasswordPage } from "./pages/password-page";
+import { initPersonalDataPage } from "./pages/personal-data-page";
+import { initProfilePage } from "./pages/profile-page";
+import { initSignUpPage } from "./pages/signup-page";
 import { initRouter } from "./router";
 
 (function () {
@@ -27,6 +32,11 @@ import { initRouter } from "./router";
    // --Pages initiators--
    initHomePage();
    initChooseLocationPage();
+   initLoginPage();
+   initSignUpPage();
+   initProfilePage();
+   initPersonalDataPage();
+   initPasswordPage();
    // --Router--
    initRouter();
 })();

@@ -13,6 +13,8 @@ function initReport() {
             "report__close-button"
          );
          closeEl.textContent = "close";
+         //modificar
+         //agregar que el evento de mandar la data también cierre el popup
          closeEl.addEventListener("click", (e) => {
             this.remove();
             this.innerHTML = "";

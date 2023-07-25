@@ -16,6 +16,26 @@ function initRouter() {
          path: "/choose-location",
          component: "choose-location-page",
       },
+      {
+         path: "/login",
+         component: "login-page",
+      },
+      {
+         path: "/signup",
+         component: "signup-page",
+      },
+      {
+         path: "/profile",
+         component: "profile-page",
+      },
+      {
+         path: "/personaldata",
+         component: "personal-data-page",
+      },
+      {
+         path: "/password",
+         component: "password-page",
+      },
    ]);
 }
 export { initRouter };
