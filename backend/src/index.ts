@@ -1,5 +1,8 @@
 import express, { json } from "express";
-import { getReportsInArea } from "./controllers/reports-controller";
+import {
+   createReport,
+   getReportsInArea,
+} from "./controllers/reports-controller";
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -12,10 +15,23 @@ app.get("/up", (req, res) => {
    res.send(`Server up and running in ${environment} mode`);
 });
 
-//endpoints a hacer:
+//TERMINAR endpoints:
+
+//Reportar mascota
+app.post("/report", async (req, res) => {
+   const { imageUrl, lat, lng } = req.body;
+
+   if (!imageUrl || !lat || !lng)
+      return res
+         .status(400)
+         .send("information missing. Body must have imageUrl, lat and lng");
+
+   const response = await createReport(req.body);
+   res.send(response);
+});
 
 //obtener las mascotas cerca de un punto. Habla con algolia para obtener los IDs de todas y con esos IDs las trae desde elephant
-app.get("/reports/location", (req, res) => {
+app.get("/reports/location", async (req, res) => {
    const { lat, lng } = req.query;
    if (!lat || !lng) {
       return res
@@ -23,7 +39,10 @@ app.get("/reports/location", (req, res) => {
          .send("information missing. Request must have lat and lng");
    }
 
-   const reports = getReportsInArea({ lat: Number(lat), lng: Number(lng) });
+   const reports = await getReportsInArea({
+      lat: Number(lat),
+      lng: Number(lng),
+   });
 
    return res.json(reports);
 });
@@ -36,8 +55,6 @@ app.get("/reports/location", (req, res) => {
 //Editar data del usuario
 
 //Editar contraseña
-
-//Reportar mascota
 
 //Editar reporte
 
