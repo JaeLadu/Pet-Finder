@@ -1,6 +1,6 @@
 import { Op } from "sequelize";
 import { reports as algoliaReports } from "../lib/algolia";
-import { Report as sequelizeReports } from "../models/reports";
+import { Report as sequelizeReports } from "../models/models";
 
 type Area = {
    lat: number;
@@ -16,7 +16,9 @@ type SequelizeReport = {
    imageUrl: string;
    lat: number;
    lng: number;
+   UserId: number;
 };
+// Habla con algolia para obtener los IDs de todas las mascotas cerca del area y con esos IDs las trae desde elephant
 async function getReportsInArea(location: Area) {
    const data = await algoliaReports.search<AlgoliaReport>("", {
       aroundLatLng: `${location.lat}, ${location.lng}`,
@@ -58,4 +60,4 @@ async function createReport(reportData: SequelizeReport) {
    }
 }
 
-export { getReportsInArea, createReport, SequelizeReport };
+export { getReportsInArea, createReport };
