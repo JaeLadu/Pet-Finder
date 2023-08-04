@@ -2,9 +2,16 @@ import express, { NextFunction, Request, Response, json } from "express";
 import {
    createReport,
    getReportsInArea,
+   updateReport,
 } from "./controllers/reports-controller";
+import {
+   getToken,
+   signUp,
+   getUserData,
+   updateUserData,
+   updateUserPassword,
+} from "./controllers/users-controller";
 import crypto from "crypto";
-import { getToken, signUp } from "./controllers/users-controller";
 import jwt from "jsonwebtoken";
 
 const app = express();
@@ -84,8 +91,25 @@ app.post("/report", checkToken, async (req, res) => {
 
 //-------------------------------------------------------------------------------------------------------------------------------------------
 
+//Editar reporte
+app.patch("/report/:reportId", checkToken, async (req, res) => {
+   //Extrae los datos necesarios y edita el req.body para poder pasarlo a la función updateReport
+   const { reportId } = req.params;
+   req.body.UserId = req.body.id;
+   delete req.body.id;
+   //Intenta hacer el update
+   const response = await updateReport(Number(reportId), req.body);
+   if (response.error) return res.status(400).send("Something went wrong");
+   if (!response.owner) return res.status(403).send("Not your report!");
+   if (response.updated) return res.send("Report updated");
+   else return res.json(response);
+});
+
+//-------------------------------------------------------------------------------------------------------------------------------------------
+
 //obtener las mascotas cerca de un punto
 app.get("/reports/location", async (req, res) => {
+   //checkea la info del input
    const { lat, lng } = req.query;
    if (!lat || !lng) {
       return res
@@ -93,6 +117,7 @@ app.get("/reports/location", async (req, res) => {
          .send("information missing. Request must have lat and lng");
    }
 
+   //Pide todos los reportes a la DB y los devuelve
    const reports = await getReportsInArea({
       lat: Number(lat),
       lng: Number(lng),
@@ -155,15 +180,30 @@ app.get("/auth", encrypPassword, async (req, res) => {
 
 //-------------------------------------------------------------------------------------------------------------------------------------------
 
-//Editar data del usuario
-
-//-------------------------------------------------------------------------------------------------------------------------------------------
-
 //Editar contraseña
+app.patch("/auth", checkToken, encrypPassword, async (req, res) => {
+   const response = await updateUserPassword(req.body);
+   if (!response?.error) return res.send("Password change succesfull");
+   return res.status(400).send("Something went wrong");
+});
 
 //-------------------------------------------------------------------------------------------------------------------------------------------
 
-//Editar reporte
+//Obtener toda la data del usuario
+app.get("/user", checkToken, async (req, res) => {
+   const data = await getUserData(req.body.id);
+   if (!data.id) return res.status(400).send("User not found");
+   return res.json(data);
+});
+
+//-------------------------------------------------------------------------------------------------------------------------------------------
+
+//Editar data del usuario
+app.patch("/user", checkToken, async (req, res) => {
+   const response = await updateUserData(req.body);
+   if (!response?.error) return res.send("User info updated");
+   return res.status(400).send("User not found");
+});
 
 //-------------------------------------------------------------------------------------------------------------------------------------------
 

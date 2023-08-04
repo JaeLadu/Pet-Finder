@@ -22,7 +22,7 @@ async function signUp(data: { mail: string; password: string }) {
 //busca el registro auth que contenga el mail y pass pasados como parámetros. Si encuentra uno, usa su userId para crear el token y lo devuelve
 async function getToken(data: { mail: string; password: string }) {
    const response = {
-      message: '"Something went wrong"',
+      message: "Something went wrong",
       secret: false,
       auth: false,
       token: "",
@@ -33,23 +33,67 @@ async function getToken(data: { mail: string; password: string }) {
       return response;
    }
 
-   const auth = await Auth.findOne({ where: { ...data } });
+   try {
+      const auth = await Auth.findOne({
+         where: { ...data },
+         rejectOnEmpty: true,
+      });
 
-   if (!auth) {
-      response.secret = true;
-      response.message = "Auth missing";
-   }
+      if (auth == null) {
+         response.secret = true;
+         response.message = "Auth missing";
+      }
 
-   if (auth?.dataValues.UserId && SECRET) {
-      response.secret = true;
-      response.auth = true;
-      response.token = jwt.sign(auth.dataValues.UserId, SECRET);
-      response.message = "Ok";
-   } else {
-      response.secret = true;
-      response.auth = true;
+      if (auth?.dataValues.UserId && SECRET) {
+         response.secret = true;
+         response.auth = true;
+         response.token = jwt.sign(auth.dataValues.UserId, SECRET);
+         response.message = "Ok";
+      } else {
+         response.secret = true;
+         response.auth = true;
+      }
+   } catch (error) {
+      response.auth == false;
+      response.message += ` error: ${JSON.stringify(error)}`;
    }
    return response;
 }
 
-export { signUp, getToken };
+async function getUserData(id: number) {
+   try {
+      const user = await User.findByPk(id, { rejectOnEmpty: true });
+      return user?.dataValues;
+   } catch (error) {
+      return error;
+   }
+}
+
+async function updateUserData(data: {
+   id: number;
+   name?: string;
+   city?: string;
+}) {
+   try {
+      const user = await User.findByPk(data.id, { rejectOnEmpty: true });
+      await user?.update(data);
+      return;
+   } catch (error) {
+      return { error: error };
+   }
+}
+
+async function updateUserPassword(data: { id: number; password: string }) {
+   try {
+      const auth = await Auth.findOne({
+         where: { UserId: data.id },
+         rejectOnEmpty: true,
+      });
+      await auth?.update({ password: data.password });
+      return;
+   } catch (error) {
+      return { error: error };
+   }
+}
+
+export { signUp, getToken, getUserData, updateUserData, updateUserPassword };

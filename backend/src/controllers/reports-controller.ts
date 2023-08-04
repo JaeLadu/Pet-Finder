@@ -60,4 +60,27 @@ async function createReport(reportData: SequelizeReport) {
    }
 }
 
-export { getReportsInArea, createReport };
+async function updateReport(reportId: number, report: SequelizeReport) {
+   const response = {
+      owner: false,
+      updated: false,
+      error: "",
+   };
+   try {
+      //primero checkea si el usuario es realmente dueño del report
+      const oldReport = await sequelizeReports.findByPk(reportId, {
+         rejectOnEmpty: true,
+      });
+      response.owner = oldReport?.dataValues.UserId == report.UserId;
+      if (!response.owner) return response;
+
+      //después actualiza el report
+      const updated = await oldReport?.update(report);
+      if (updated) response.updated = true;
+   } catch (error) {
+      response.error = JSON.stringify(error);
+   }
+   return response;
+}
+
+export { getReportsInArea, createReport, updateReport };
