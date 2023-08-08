@@ -8,6 +8,7 @@
       "dev:back": "nodemon -w ./backend/src -x ts-node ./backend/src/dev.ts"
    },
    "dependencies": {
+      "@sendgrid/mail": "^7.7.0",
       "@types/express": "^4.17.17",
       "@types/jsonwebtoken": "^9.0.2",
       "@types/node": "^20.4.1",

@@ -2,6 +2,8 @@ import express, { NextFunction, Request, Response, json } from "express";
 import {
    createReport,
    getReportsInArea,
+   getUserReports,
+   reportPet,
    updateReport,
 } from "./controllers/reports-controller";
 import {
@@ -63,7 +65,7 @@ function checkToken(req: Request, res: Response, next: NextFunction) {
    }
 }
 
-//TERMINAR endpoints:
+//endpoints:
 
 //endpoint básico para poder checkear que el server esté activo desde el cliente
 app.get("/up", (req, res) => {
@@ -87,6 +89,19 @@ app.post("/report", checkToken, async (req, res) => {
    //crea el reporte y lo devuelve
    const response = await createReport(req.body);
    res.send(response);
+});
+
+//-------------------------------------------------------------------------------------------------------------------------------------------
+
+//reportar una mascota. Debería sólo avisar por mail al dueño que alguien lo vió y donde. Envía los datos de contacto por mail.
+// Usa sendgrid o Resend
+app.post("/report/:reportId", async (req, res) => {
+   const { message } = req.body;
+   if (!message) return res.send("Must send a message");
+
+   const sent = await reportPet({ ...req.body, ...req.params });
+   if (sent) return res.send("Mail sent");
+   else return res.send("Something went wrong");
 });
 
 //-------------------------------------------------------------------------------------------------------------------------------------------
@@ -124,6 +139,16 @@ app.get("/reports/location", async (req, res) => {
    });
 
    return res.json(reports);
+});
+
+//-------------------------------------------------------------------------------------------------------------------------------------------
+
+//Obtener todas mis mascotas
+app.get("/reports", checkToken, async (req, res) => {
+   const userId = req.body.id;
+   const reports = getUserReports(userId);
+
+   res.json(reports);
 });
 
 //-------------------------------------------------------------------------------------------------------------------------------------------
@@ -204,14 +229,6 @@ app.patch("/user", checkToken, async (req, res) => {
    if (!response?.error) return res.send("User info updated");
    return res.status(400).send("User not found");
 });
-
-//-------------------------------------------------------------------------------------------------------------------------------------------
-
-//Obtener todas mis mascotas
-
-//-------------------------------------------------------------------------------------------------------------------------------------------
-
-//reportar una mascota. Debería sólo avisar por mail al dueño que alguien lo vió y donde. Envía los datos de contacto por mail. Usa sendgrid o Resend
 
 app.listen(port, () => {
    console.log(`Server up and running in ${environment} mode in port ${port}`);

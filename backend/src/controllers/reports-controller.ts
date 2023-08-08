@@ -1,6 +1,7 @@
 import { Op } from "sequelize";
 import { reports as algoliaReports } from "../lib/algolia";
-import { Report as sequelizeReports } from "../models/models";
+import { Auth, Report as sequelizeReports } from "../models/models";
+import { sgMail } from "../lib/sendgrid";
 
 type Area = {
    lat: number;
@@ -83,4 +84,62 @@ async function updateReport(reportId: number, report: SequelizeReport) {
    return response;
 }
 
-export { getReportsInArea, createReport, updateReport };
+async function getUserReports(userId: number) {
+   return await sequelizeReports.findAll({ where: { UserId: userId } });
+}
+
+//Arma y envía un mail a un dueño de mascota cuando alguien reporta haberla visto
+async function reportPet(data: {
+   reportId: number;
+   name: string;
+   phone: number;
+   message: string;
+}) {
+   try {
+      //busca el report en la base de datos y
+      //usa su UserId para buscar el auth del usuario al que ambos le corresponden
+      const report = (await sequelizeReports.findByPk(data.reportId))
+         ?.dataValues;
+      const auth = (await Auth.findOne({ where: { UserId: report.UserId } }))
+         ?.dataValues;
+
+      //Si algo sale mal, cancela todo y devuelve false
+      //Esta linea aprece innecesaria, ya que está todo dentro de un try
+      if (!auth.mail || auth.mail == null) return false;
+
+      //para mejorar legibilidad, defino subject y html fuera del objeto mail
+      const subject = data.name != null ? data.name : "";
+      const html = /*html*/ `
+         <p>Mensaje: ${data.message}</p>
+         ${
+            data.name != null
+               ? "<p>Nombre de quien lo vió: " + data.name + "</p>"
+               : ""
+         }
+         ${data.phone != null ? "<p>Contacto: " + data.phone + "</p>" : ""}
+         
+      `;
+      //objeto que define todos los datos que se usan para enviar el mail
+      const mail = {
+         to: auth.mail,
+         from: "jaeladu1@gmail.com",
+         subject: subject,
+         html: html,
+      };
+
+      await sgMail.send(mail);
+      console.log("mail sent");
+      return true;
+   } catch (e) {
+      console.log(`error: ${e}`);
+      return false;
+   }
+}
+
+export {
+   getReportsInArea,
+   createReport,
+   updateReport,
+   getUserReports,
+   reportPet,
+};
