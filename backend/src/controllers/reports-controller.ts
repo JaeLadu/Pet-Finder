@@ -2,6 +2,7 @@ import { Op } from "sequelize";
 import { reports as algoliaReports } from "../lib/algolia";
 import { Auth, Report as sequelizeReports } from "../models/models";
 import { sgMail } from "../lib/sendgrid";
+import { cloudinary } from "../lib/cloudinary";
 
 type Area = {
    lat: number;
@@ -14,7 +15,8 @@ type AlgoliaReport = {
 };
 type SequelizeReport = {
    name: string;
-   imageUrl: string;
+   dataURL?: string;
+   imageUrl?: string;
    lat: number;
    lng: number;
    UserId: number;
@@ -39,23 +41,39 @@ async function getReportsInArea(location: Area) {
 
 async function createReport(reportData: SequelizeReport) {
    try {
-      //crea el reporte en elephant y recupera el ID con el que se guardó
-      const sequelizeReport = (await sequelizeReports.create(reportData))
-         .dataValues;
+      //guarda la imágen en cloudinary, obtiene el url de la imágen y edita el objeto
+      if (reportData.dataURL) {
+         const imageUrl = (await cloudinary.uploader.upload(reportData.dataURL))
+            .url;
+         reportData.imageUrl = imageUrl;
+         delete reportData.dataURL;
+      } else {
+         throw new Error("Falta dataURL");
+      }
 
-      //usa el ID de elephant para crear un objeto y guardarlo en Algolia
-      const algoliaObject = {
-         name: sequelizeReport.name,
-         elephantID: sequelizeReport.id,
-         _geoloc: {
-            lat: sequelizeReport.lat,
-            lng: sequelizeReport.lng,
-         },
-      };
-      await algoliaReports.saveObject(algoliaObject, {
-         autoGenerateObjectIDIfNotExist: true,
-      });
-      return `Report ${sequelizeReport.id} creado correctamente`;
+      if (reportData.imageUrl) {
+         //crea el reporte en elephant y recupera el ID con el que se guardó
+         const sequelizeReport = (await sequelizeReports.create(reportData))
+            .dataValues;
+
+         //usa el ID de elephant para crear un objeto y guardarlo en Algolia
+         const algoliaObject = {
+            name: sequelizeReport.name,
+            elephantID: sequelizeReport.id,
+            _geoloc: {
+               lat: sequelizeReport.lat,
+               lng: sequelizeReport.lng,
+            },
+         };
+         await algoliaReports.saveObject(algoliaObject, {
+            autoGenerateObjectIDIfNotExist: true,
+         });
+
+         return `Report ${sequelizeReport.id} creado correctamente`;
+         
+      } else {
+         throw new Error("Error en sequelize o algolia");
+      }
    } catch (error) {
       return `Algo salió mal: ${JSON.stringify(error)}`;
    }

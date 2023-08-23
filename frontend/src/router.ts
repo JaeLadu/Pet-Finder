@@ -36,6 +36,10 @@ function initRouter() {
          path: "/password",
          component: "password-page",
       },
+      {
+         path: "/createreport",
+         component: "create-report-page",
+      },
    ]);
 }
 export { initRouter };

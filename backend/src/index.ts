@@ -15,6 +15,7 @@ import {
 } from "./controllers/users-controller";
 import crypto from "crypto";
 import jwt from "jsonwebtoken";
+import path from "path";
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -77,18 +78,22 @@ app.get("/up", (req, res) => {
 //Reportar mascota
 app.post("/report", checkToken, async (req, res) => {
    //checkea la info del input
-   const { id, imageUrl, lat, lng } = req.body;
+   const { id, dataURL, lat, lng } = req.body;
 
-   if (!imageUrl || !lat || !lng)
+   if (!dataURL || !lat || !lng)
       return res
          .status(400)
-         .send("information missing. Body must have imageUrl, lat and lng");
+         .send("information missing. Body must have dataURL, lat and lng");
 
    req.body.UserId = id;
    delete req.body.id;
    //crea el reporte y lo devuelve
-   const response = await createReport(req.body);
-   res.send(response);
+   try {
+      const response = await createReport(req.body);
+      res.send(response);
+   } catch (error) {
+      res.send(error);
+   }
 });
 
 //-------------------------------------------------------------------------------------------------------------------------------------------
@@ -229,6 +234,9 @@ app.patch("/user", checkToken, async (req, res) => {
    if (!response?.error) return res.send("User info updated");
    return res.status(400).send("User not found");
 });
+
+//TERMINAR cambiar el nombre de la carpeta que sirve por la que va a ser en producción
+app.use(express.static("dist"));
 
 app.listen(port, () => {
    console.log(`Server up and running in ${environment} mode in port ${port}`);

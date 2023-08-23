@@ -4,7 +4,9 @@ type coordenates = {
 };
 
 const state = {
-   data: {},
+   data: {
+      userLocation: {},
+   },
 
    setUserLocation(coordenates: coordenates) {
       this.data.userLocation = coordenates;

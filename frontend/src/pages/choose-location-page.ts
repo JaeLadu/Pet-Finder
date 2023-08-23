@@ -1,5 +1,6 @@
 import { Router } from "@vaadin/router";
 import { initMap } from "../lib/mapbox";
+import { state } from "../state";
 
 function initChooseLocationPage() {
    class ChooseLocationPage extends HTMLElement {
@@ -20,9 +21,12 @@ function initChooseLocationPage() {
          const mapContainerEl = document.createElement("div");
          mapContainerEl.id = "map";
          mapContainerEl.classList.add("map-container");
-         mapContainerEl.addEventListener("newlocation", (e) => {
-            console.log("newlocation");
-         });
+         mapContainerEl.addEventListener(
+            "newlocation",
+            (e: CustomEventInit) => {
+               state.setUserLocation(e.detail);
+            }
+         );
 
          const buttonContainerEl = document.createElement("div");
          buttonContainerEl.classList.add("button-container");
@@ -58,7 +62,7 @@ function initChooseLocationPage() {
             buttonContainerEl,
             styleEl
          );
-         initMap();
+         initMap(mapContainerEl);
       }
    }
 
