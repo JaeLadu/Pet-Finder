@@ -6,13 +6,13 @@ const SECRET = process.env.JWT_SECRET;
 //crea un usuario
 async function signUp(data: { mail: string; password: string }) {
    try {
-      const auth = (await Auth.findOrCreate({ where: data }))[0];
+      const [auth, created] = await Auth.findOrCreate({ where: data });
 
-      if (auth.dataValues.UserId == null) {
-         const userId = (await User.create({})).dataValues.id;
-         await auth.update({ UserId: userId });
-         return `New User created id: ${userId}`;
+      //checkea si el usuario ya existía, si es así, devuelve el id que obtuvo del mismo
+      if (created) {
+         return `New User created id: ${auth.dataValues.userId}`;
       }
+      //si lo tuvo que crear, devuelve el nuevo id
       return `User already existed id: ${auth.dataValues.UserId}`;
    } catch (error) {
       return JSON.stringify(error);

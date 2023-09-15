@@ -1,4 +1,5 @@
 import { Router } from "@vaadin/router";
+import { state } from "../state";
 
 function initSignUpPage() {
    class SignUpPage extends HTMLElement {
@@ -6,6 +7,9 @@ function initSignUpPage() {
          super();
       }
       connectedCallback() {
+         //sin terminar
+         //encontrar una forma para que, si vengo de otra página que necesite que me loguee
+         // después de loguearme, me vuelva a redirigir a esa página a la que quería ir
          const headerEl = document.createElement("header-comp");
 
          const containerEl = document.createElement("div");
@@ -23,8 +27,8 @@ function initSignUpPage() {
          const formEl = document.createElement("form");
          formEl.innerHTML = /*html*/ `
             <label>
-                <caption-comp text='nombre'></caption-comp>
-                <input type="text" name="name">
+                <caption-comp text='email'></caption-comp>
+                <input type="text" name="mail">
             </label>
             <label>
                 <caption-comp text='contraseña'></caption-comp>
@@ -40,15 +44,18 @@ function initSignUpPage() {
          buttonEl.setAttribute("color", "#5A8FEC");
          buttonEl.setAttribute("text", "Registrarme");
          buttonEl.setAttribute("text-color", "#fff");
-         buttonEl.addEventListener("click", (e) => {
+         buttonEl.addEventListener("click", async (e) => {
             //sin terminar
             //falta checkeo de password
             e.preventDefault();
             const formData = new FormData(formEl);
             const data = Object.fromEntries(formData.entries());
-            //sin terminar
-            console.log(data);
-            Router.go("/reports");
+            const response = await state.signup(
+               Object(data).mail,
+               Object(data).password
+            );
+            if (response.ok) Router.go("/reports");
+            else console.log(response.error);
          });
 
          const accountQuestionEl = document.createElement("body-text-comp");

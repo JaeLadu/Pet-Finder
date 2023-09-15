@@ -24,7 +24,7 @@ function initChooseLocationPage() {
          mapContainerEl.addEventListener(
             "newlocation",
             (e: CustomEventInit) => {
-               state.setUserLocation(e.detail);
+               state.setUserData({ location: e.detail });
             }
          );
 

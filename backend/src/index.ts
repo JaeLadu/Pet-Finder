@@ -15,15 +15,16 @@ import {
 } from "./controllers/users-controller";
 import crypto from "crypto";
 import jwt from "jsonwebtoken";
-import path from "path";
+import cors from "cors";
 
 const app = express();
-const port = process.env.PORT || 3000;
+const port = process.env.BACK_PORT || 3000;
 const environment = process.env.ENVIRONMENT;
 const SECRET = process.env.JWT_SECRET;
 
 //Middleware
 app.use(json());
+app.use(cors());
 
 //Convierte la contraseña que se envía en el body en un hash
 function encrypPassword(req: Request, res: Response, next: NextFunction) {
@@ -98,8 +99,7 @@ app.post("/report", checkToken, async (req, res) => {
 
 //-------------------------------------------------------------------------------------------------------------------------------------------
 
-//reportar una mascota. Debería sólo avisar por mail al dueño que alguien lo vió y donde. Envía los datos de contacto por mail.
-// Usa sendgrid o Resend
+//reportar una mascota
 app.post("/report/:reportId", async (req, res) => {
    const { message } = req.body;
    if (!message) return res.send("Must send a message");
@@ -151,7 +151,7 @@ app.get("/reports/location", async (req, res) => {
 //Obtener todas mis mascotas
 app.get("/reports", checkToken, async (req, res) => {
    const userId = req.body.id;
-   const reports = getUserReports(userId);
+   const reports = await getUserReports(userId);
 
    res.json(reports);
 });
@@ -159,14 +159,14 @@ app.get("/reports", checkToken, async (req, res) => {
 //-------------------------------------------------------------------------------------------------------------------------------------------
 
 //Registrar usuario
-app.post("/auth", encrypPassword, async (req, res) => {
+app.post("/auth/signup", encrypPassword, async (req, res) => {
    //checkea la info del input
    const { mail, password } = req.body;
 
    if (!mail || !password)
       return res
          .status(400)
-         .send("information missing. Body must have imageUrl, lat and lng");
+         .send("information missing. Body must have mail and password");
 
    //crea el usuario
    delete req.body.id;
@@ -176,31 +176,31 @@ app.post("/auth", encrypPassword, async (req, res) => {
    const tokenObject = await getToken(req.body);
 
    //si todo sale ok y existe el token, lo devuelve
-   if (tokenObject.token) return res.send(tokenObject.token);
+   if (tokenObject.token) return res.send({ token: tokenObject.token });
    //Si no se encuentra el usuario en la DB
    if (!tokenObject.auth)
       return res.status(400).send({ message: "User not found" });
    //Si hay otro error, devuelve el objeto con toda la info
-   return res.send(tokenObject);
+   return res.status(400).send(tokenObject);
 });
 
 //-------------------------------------------------------------------------------------------------------------------------------------------
 
 //Login / ingresar
-app.get("/auth", encrypPassword, async (req, res) => {
+app.post("/auth/signin", encrypPassword, async (req, res) => {
    //checkea la info del input
    const { mail, password } = req.body;
 
    if (!mail || !password)
       return res
          .status(400)
-         .send("information missing. Body must have imageUrl, lat and lng");
+         .send("information missing. Body must have mail and password");
 
    //intenta crear el token
    const tokenObject = await getToken(req.body);
 
    //si todo sale ok y existe el token, lo devuelve
-   if (tokenObject.token) return res.send(tokenObject.token);
+   if (tokenObject.token) return res.send({ token: tokenObject.token });
    //Si no se encuentra el usuario en la DB
    if (!tokenObject.auth)
       return res.status(400).send({ message: "User not found" });

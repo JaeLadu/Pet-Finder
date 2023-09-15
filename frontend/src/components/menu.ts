@@ -1,7 +1,11 @@
+import { Router } from "@vaadin/router";
+import { state } from "../state";
+
 function initMenu() {
    class Menu extends HTMLElement {
       constructor() {
          super();
+         state.subscribe(() => this.connectedCallback);
       }
 
       connectedCallback() {
@@ -22,18 +26,73 @@ function initMenu() {
          const linksContainerEl = document.createElement("ul");
          linksContainerEl.classList.add("menu__links-container");
 
-         linksContainerEl.innerHTML = /*html*/ `
-            <li goes-to= '/profile'><subtitle-comp color='#fff' text='Mis datos'></subtitle-comp></li>
-            <li goes-to= '/reports'><subtitle-comp color='#fff' text='Mis mascotas reportadas'></subtitle-comp></li>
-            <li goes-to= '/report-lost-pet'><subtitle-comp color='#fff' text='Reportar mascota'></subtitle-comp></li>
+         const profileLinkEl = document.createElement("li");
+         profileLinkEl.innerHTML = /*html*/ `
+            <subtitle-comp color='#fff' text='Mis datos'></subtitle-comp>
          `;
+         profileLinkEl.addEventListener("click", () => {
+            Router.go("/profile");
+         });
 
-         const sessionEl = document.createElement("div");
-         sessionEl.classList.add("menu__session-container");
-         sessionEl.innerHTML = /*html*/ `
-            <caption-comp text=email@email.com color=#fff></caption-comp>
-            <link-comp text='cerrar sesión'></link-comp>
+         const reportsLinkEl = document.createElement("li");
+         reportsLinkEl.innerHTML = /*html*/ `
+            <subtitle-comp color='#fff' text='Mis mascotas reportadas'></subtitle-comp>
          `;
+         reportsLinkEl.addEventListener("click", () => {
+            Router.go("/reports");
+         });
+
+         const createReportLinkEl = document.createElement("li");
+         createReportLinkEl.innerHTML = /*html*/ `
+            <subtitle-comp color='#fff' text='Reportar mascota'></subtitle-comp>
+         `;
+         createReportLinkEl.addEventListener("click", () => {
+            Router.go("/createreport");
+         });
+
+         const changeLocationLinkEl = document.createElement("li");
+         const userLocation = state.getUserData()?.location;
+         changeLocationLinkEl.innerHTML = /*html*/ `
+            <subtitle-comp color='#fff' text='${
+               userLocation ? "Cambiar ubicación" : "Dar mi ubicación actual"
+            }'></subtitle-comp>
+         `;
+         changeLocationLinkEl.addEventListener("click", () => {
+            Router.go("/choose-location");
+         });
+
+         linksContainerEl.append(
+            profileLinkEl,
+            reportsLinkEl,
+            createReportLinkEl,
+            changeLocationLinkEl
+         );
+
+         const userMail = state.getUserData()?.mail;
+         const sessionContainerEl = document.createElement("div");
+         sessionContainerEl.classList.add("menu__session-container");
+
+         if (userMail) {
+            const mailEl = document.createElement("caption-comp");
+            mailEl.setAttribute("text", userMail);
+            mailEl.setAttribute("color", "#fff");
+
+            const captionEl = document.createElement("link-comp");
+            captionEl.setAttribute("text", "cerrar sesión");
+            captionEl.setAttribute("target", "/");
+            captionEl.addEventListener("click", (e) => {
+               e.preventDefault();
+               state.closeSession();
+               this.remove();
+               this.innerHTML = "";
+            });
+
+            sessionContainerEl.append(mailEl, captionEl);
+         } else {
+            sessionContainerEl.innerHTML = /*html*/ `
+            <link-comp target='/login' text='iniciar sesión'></link-comp>
+            `;
+         }
 
          const style = document.createElement("style");
          style.textContent = /*css*/ `
@@ -73,7 +132,7 @@ function initMenu() {
             }
 `;
 
-         menuEl.append(closeEl, linksContainerEl, sessionEl);
+         menuEl.append(closeEl, linksContainerEl, sessionContainerEl);
          this.append(menuEl, style);
       }
    }

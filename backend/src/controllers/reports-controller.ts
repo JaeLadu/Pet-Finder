@@ -32,7 +32,7 @@ async function getReportsInArea(location: Area) {
 
    const reports = await sequelizeReports.findAll({
       where: {
-         id: { [Op.or]: elephantIDs },
+         id: elephantIDs,
       },
    });
 
@@ -69,13 +69,18 @@ async function createReport(reportData: SequelizeReport) {
             autoGenerateObjectIDIfNotExist: true,
          });
 
-         return `Report ${sequelizeReport.id} creado correctamente`;
-         
+         return {
+            message: `Report ${sequelizeReport.id} creado correctamente`,
+            reportId: sequelizeReport.id,
+         };
       } else {
          throw new Error("Error en sequelize o algolia");
       }
    } catch (error) {
-      return `Algo salió mal: ${JSON.stringify(error)}`;
+      return {
+         message: `Algo salió mal: ${JSON.stringify(error)}`,
+         error: JSON.stringify(error),
+      };
    }
 }
 

@@ -11,7 +11,7 @@ function initHomePage() {
          this.append(headerEl);
 
          //chequea si hay info sobre la ubicación del usuario, si hay, renderiza una página, sino otra
-         const location = state.getUserLocation();
+         const location = state.getUserData()?.location;
          if (location) this.locationRender();
          else this.defaultRender();
       }
@@ -82,71 +82,67 @@ function initHomePage() {
       };
 
       //página a renderizar si hay info sobre la ubicación del usuario disponible
-      locationRender = () => {
+      locationRender = async () => {
          const subtitleEl = document.createElement("subtitle-comp");
          subtitleEl.setAttribute("text", "Mascotas perdidas cerca");
          subtitleEl.setAttribute("bold", "true");
 
-         //sin terminar
-         //acá va la magia que habla con el back y trae toda la data de las mascotas que estén cerca, casi seguro que en un array
-
-         //mock
-         const pets = [
-            {
-               image: "https://res.cloudinary.com/dxdihjprh/image/upload/v1689962771/pet-finder/jw99x3jagugoxbpe87x2.png",
-               name: "El perro",
-               location: [-31.420757339613516, -64.52347101972522],
-               area: "Villa Carlos Paz",
-            },
-            {
-               image: "https://res.cloudinary.com/dxdihjprh/image/upload/v1688831887/pet-finder/incwm1zpjwpeczovbz8x.png",
-               name: "Branca",
-               location: [-31.420757339613516, -64.52347101972522],
-               area: "Villa Carlos Paz",
-               owned: "true",
-            },
-            {
-               image: "https://res.cloudinary.com/dxdihjprh/image/upload/v1688831887/pet-finder/incwm1zpjwpeczovbz8x.png",
-               name: "Tutuca",
-               location: [-31.420757339613516, -64.52347101972522],
-               area: "Villa Carlos Paz",
-               owned: "true",
-            },
-         ];
+         const pets = await state.getPetsInArea();
 
          const petCardscontainerEl = document.createElement("div");
          petCardscontainerEl.classList.add("cards-container");
-         pets.forEach((pet) => {
-            const petCardEl = document.createElement("pet-card-comp");
-            petCardEl.setAttribute("img", pet.image);
-            petCardEl.setAttribute("name", pet.name);
-            petCardEl.setAttribute("location", pet.area);
-            if (pet.owned) petCardEl.setAttribute("own", pet.owned);
+         if (pets.length > 0) {
+            pets.forEach(
+               (pet: {
+                  imageUrl: string;
+                  name: string;
+                  area: string;
+                  owned: boolean;
+               }) => {
+                  const petCardEl = document.createElement("pet-card-comp");
+                  petCardEl.setAttribute("img", pet.imageUrl);
+                  petCardEl.setAttribute("name", pet.name);
+                  petCardEl.setAttribute("location", pet.area);
+                  if (pet.owned)
+                     petCardEl.setAttribute("own", JSON.stringify(pet.owned));
 
-            petCardEl.addEventListener("petCardEdit", (e) => {
-               //sin terminar
-               console.log("Debe ir a /editcard");
-            });
-
-            petCardEl.addEventListener(
-               "petCardReport",
-               (e: CustomEventInit) => {
-                  const report = document.createElement("report-comp");
-                  report.setAttribute("pet", pet.name);
-                  report.addEventListener("report", (e: CustomEventInit) => {
+                  petCardEl.addEventListener("petCardEdit", (e) => {
                      //sin terminar
-                     console.log(
-                        `data a mandar al backend para guardar: ${JSON.stringify(
-                           e.detail
-                        )}`
-                     );
+                     console.log("Debe ir a /editreport");
                   });
-                  petCardscontainerEl.append(report);
+
+                  //sin terminar
+                  //esto tiene pinta de no estar bien revisar
+                  petCardEl.addEventListener(
+                     "petCardReport",
+                     (e: CustomEventInit) => {
+                        const report = document.createElement("report-comp");
+                        report.setAttribute("pet", pet.name);
+                        report.addEventListener(
+                           "report",
+                           (e: CustomEventInit) => {
+                              console.log(
+                                 `data a mandar al backend para guardar: ${JSON.stringify(
+                                    e.detail
+                                 )}`
+                              );
+                           }
+                        );
+                        petCardscontainerEl.append(report);
+                     }
+                  );
+
+                  petCardscontainerEl.append(petCardEl);
                }
             );
-
-            petCardscontainerEl.append(petCardEl);
-         });
+         } else {
+            const messageEl = document.createElement("subtitle-comp");
+            messageEl.setAttribute(
+               "text",
+               "No hay mascotas perdidas cerca del área que elegiste"
+            );
+            petCardscontainerEl.append(messageEl);
+         }
 
          const styleEl = document.createElement("style");
          styleEl.textContent = /*css*/ `

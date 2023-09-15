@@ -1,4 +1,5 @@
 import { Router } from "@vaadin/router";
+import { state } from "../state";
 
 function initLoginPage() {
    class LoginPage extends HTMLElement {
@@ -6,6 +7,9 @@ function initLoginPage() {
          super();
       }
       connectedCallback() {
+         //sin terminar
+         //encontrar una forma para que, si vengo de otra página que necesite que me loguee
+         // después de loguearme, me vuelva a redirigir a esa página a la que quería ir
          const headerEl = document.createElement("header-comp");
 
          const containerEl = document.createElement("div");
@@ -23,8 +27,8 @@ function initLoginPage() {
          const formEl = document.createElement("form");
          formEl.innerHTML = /*html*/ `
             <label>
-                <caption-comp text='nombre'></caption-comp>
-                <input type="text" name="name">
+                <caption-comp text='mail'></caption-comp>
+                <input type="text" name="mail">
             </label>
             <label>
                 <caption-comp text='contraseña'></caption-comp>
@@ -36,13 +40,15 @@ function initLoginPage() {
          buttonEl.setAttribute("color", "#5A8FEC");
          buttonEl.setAttribute("text", "Acceder");
          buttonEl.setAttribute("text-color", "#fff");
-         buttonEl.addEventListener("click", (e) => {
+         buttonEl.addEventListener("click", async (e) => {
             e.preventDefault();
             const formData = new FormData(formEl);
-            const data = Object.fromEntries(formData.entries());
-            //sin terminar
-            console.log(data);
-            Router.go("/reports");
+            const objectData: { [k: string]: string } = {};
+            formData.forEach((value, key) => {
+               objectData[key] = value.toString();
+            });
+            await state.signin(objectData.mail, objectData.password);
+            Router.go("/");
          });
 
          //sin terminar

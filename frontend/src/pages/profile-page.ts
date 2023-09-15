@@ -1,9 +1,14 @@
 import { Router } from "@vaadin/router";
+import { state } from "../state";
 
 function initProfilePage() {
    class ProfilePage extends HTMLElement {
       constructor() {
          super();
+      }
+      onBeforeEnter() {
+         const token = state.getUserData()?.token;
+         if (!token) Router.go("/login");
       }
       connectedCallback() {
          const headerEl = document.createElement("header-comp");

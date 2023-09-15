@@ -6,6 +6,7 @@ function initReport() {
       connectedCallback() {
          const shadow = this.attachShadow({ mode: "open" });
          const pet = this.getAttribute("pet");
+         const id = this.getAttribute("id") || "0";
 
          const closeEl = document.createElement("span");
          closeEl.classList.add(
@@ -13,8 +14,6 @@ function initReport() {
             "report__close-button"
          );
          closeEl.textContent = "close";
-         //modificar
-         //agregar que el evento de mandar la data también cierre el popup
          closeEl.addEventListener("click", (e) => {
             this.remove();
             this.innerHTML = "";
@@ -52,6 +51,7 @@ function initReport() {
             e.preventDefault();
             const formData = new FormData(formEl);
             const data = Object.fromEntries(formData.entries());
+            formData.set("id", id);
             formEl.dispatchEvent(
                new CustomEvent("report", {
                   bubbles: true,
@@ -59,6 +59,8 @@ function initReport() {
                   detail: data,
                })
             );
+            this.remove();
+            this.innerHTML = "";
          });
 
          const style = document.createElement("style");

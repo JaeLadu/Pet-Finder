@@ -5,7 +5,7 @@ const MAPBOX_TOKEN = process.env.MAPBOX_ACCESS_TOKEN;
 function initMap(container) {
    const mapboxClient = new MapboxClient(MAPBOX_TOKEN);
    mapboxgl.accessToken = MAPBOX_TOKEN;
-   const userLocation = state.getUserLocation();
+   const userLocation = state.getUserData()?.location;
 
    // inicia el mapa
    const map = new mapboxgl.Map({

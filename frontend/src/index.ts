@@ -15,6 +15,7 @@ import { initLoginPage } from "./pages/login-page";
 import { initPasswordPage } from "./pages/password-page";
 import { initPersonalDataPage } from "./pages/personal-data-page";
 import { initProfilePage } from "./pages/profile-page";
+import { initReportsPage } from "./pages/reports-page";
 import { initSignUpPage } from "./pages/signup-page";
 import { initRouter } from "./router";
 
@@ -39,6 +40,7 @@ import { initRouter } from "./router";
    initPersonalDataPage();
    initPasswordPage();
    initCreateReportPage();
+   initReportsPage();
    // --Router--
    initRouter();
 })();

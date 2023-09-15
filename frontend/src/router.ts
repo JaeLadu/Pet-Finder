@@ -40,6 +40,10 @@ function initRouter() {
          path: "/createreport",
          component: "create-report-page",
       },
+      {
+         path: "/reports",
+         component: "reports-page",
+      },
    ]);
 }
 export { initRouter };

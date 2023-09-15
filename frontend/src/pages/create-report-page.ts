@@ -1,12 +1,18 @@
 import { Router } from "@vaadin/router";
 import Dropzone, { DropzoneFile } from "dropzone";
 import { initMap } from "../lib/mapbox.js";
+import { state } from "../state.js";
 
 function initCreateReportPage() {
    class CreateReportPage extends HTMLElement {
       constructor() {
          super();
       }
+      onBeforeEnter() {
+         const token = state.getUserData()?.token;
+         if (!token) Router.go("/login");
+      }
+
       connectedCallback() {
          const headerEl = document.createElement("header-comp");
 
@@ -98,16 +104,27 @@ function initCreateReportPage() {
          reportButtonEl.setAttribute("color", "#00A884");
          reportButtonEl.setAttribute("text", "Reportar mascota");
          reportButtonEl.setAttribute("text-color", "#fff");
-         reportButtonEl.addEventListener("click", (e) => {
+         reportButtonEl.addEventListener("click", async (e) => {
             e.preventDefault();
             const formData = new FormData(formEl);
             formData.append("dataURL", imageData.dataURL || "");
             formData.append("lat", JSON.stringify(location.lat));
             formData.append("lng", JSON.stringify(location.lng));
-            const data = Object.fromEntries(formData.entries());
-            //terminar
-            //mandar datos al back y redirigir a /reports
-            console.log(JSON.parse(JSON.stringify(data)));
+            const data: any = {};
+            formData.forEach((value, key) => {
+               data[key] = value.toString();
+            });
+            const response = await state.reportPet(
+               data.dataURL,
+               data.lat,
+               data.lng,
+               data.name
+            );
+
+            if (response.reportId) {
+               console.log(response.message);
+               Router.go("/reports");
+            }
          });
 
          const cancelButtonEl = document.createElement("button-comp");
