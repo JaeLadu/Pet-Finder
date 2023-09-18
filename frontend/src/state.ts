@@ -30,6 +30,16 @@ const state = {
       });
       return;
    },
+   setTargetPage(page: string) {
+      this.data.targetPage = page;
+   },
+   getTargetPage() {
+      if (this.data.targetPage) {
+         const page = this.data.targetPage;
+         this.setTargetPage("/");
+         return page;
+      } else return "/";
+   },
    async getUserReports() {
       const userData = this.getUserData();
 

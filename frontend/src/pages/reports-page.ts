@@ -1,4 +1,4 @@
-import { Router } from "@vaadin/router";
+import { Router, RouterLocation } from "@vaadin/router";
 import { state } from "../state";
 
 function initReportsPage() {
@@ -6,9 +6,12 @@ function initReportsPage() {
       constructor() {
          super();
       }
-      onBeforeEnter() {
+      onBeforeEnter(location: RouterLocation) {
          const token = state.getUserData()?.token;
-         if (!token) Router.go("/login");
+         if (!token) {
+            state.setTargetPage(location.pathname);
+            Router.go("/login");
+         }
       }
 
       async connectedCallback() {

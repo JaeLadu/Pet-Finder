@@ -7,9 +7,8 @@ function initLoginPage() {
          super();
       }
       connectedCallback() {
-         //sin terminar
-         //encontrar una forma para que, si vengo de otra página que necesite que me loguee
-         // después de loguearme, me vuelva a redirigir a esa página a la que quería ir
+         const targetPage = state.getTargetPage();
+
          const headerEl = document.createElement("header-comp");
 
          const containerEl = document.createElement("div");
@@ -48,10 +47,11 @@ function initLoginPage() {
                objectData[key] = value.toString();
             });
             await state.signin(objectData.mail, objectData.password);
-            Router.go("/");
+            Router.go(targetPage);
          });
 
          //sin terminar
+         //falta sistema de recuperación de contraseña
          const forgotPassEl = document.createElement("link-comp");
          forgotPassEl.setAttribute("text", "Olvidé mi contraseña");
 

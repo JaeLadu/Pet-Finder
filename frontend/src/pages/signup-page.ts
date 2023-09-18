@@ -7,9 +7,8 @@ function initSignUpPage() {
          super();
       }
       connectedCallback() {
-         //sin terminar
-         //encontrar una forma para que, si vengo de otra página que necesite que me loguee
-         // después de loguearme, me vuelva a redirigir a esa página a la que quería ir
+         const targetPage = state.getTargetPage();
+
          const headerEl = document.createElement("header-comp");
 
          const containerEl = document.createElement("div");
@@ -54,7 +53,7 @@ function initSignUpPage() {
                Object(data).mail,
                Object(data).password
             );
-            if (response.ok) Router.go("/reports");
+            if (response.ok) Router.go(targetPage);
             else console.log(response.error);
          });
 

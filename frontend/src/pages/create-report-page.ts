@@ -1,4 +1,4 @@
-import { Router } from "@vaadin/router";
+import { Router, RouterLocation } from "@vaadin/router";
 import Dropzone, { DropzoneFile } from "dropzone";
 import { initMap } from "../lib/mapbox.js";
 import { state } from "../state.js";
@@ -8,9 +8,12 @@ function initCreateReportPage() {
       constructor() {
          super();
       }
-      onBeforeEnter() {
+      onBeforeEnter(location: RouterLocation) {
          const token = state.getUserData()?.token;
-         if (!token) Router.go("/login");
+         if (!token) {
+            state.setTargetPage(location.pathname);
+            Router.go("/login");
+         }
       }
 
       connectedCallback() {
