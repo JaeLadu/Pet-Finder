@@ -31,15 +31,15 @@ function initReport() {
          formEl.innerHTML = /*html*/ `
             <label>
                 <caption-comp color='white' text='nombre'></caption-comp>
-                <input name='nombre' type="text">
+                <input name='name' type="text">
             </label>
             <label>
                 <caption-comp color='white' text='teléfono'></caption-comp>
-                <input name='teléfono' type="text">
+                <input name='phone' type="text">
             </label>
             <label >
                 <caption-comp color='white' text='Donde lo viste?'></caption-comp>
-                <textarea name='location'></textarea>
+                <textarea name='message'></textarea>
             </label>
          `;
 
@@ -50,8 +50,8 @@ function initReport() {
          bunttonEl.addEventListener("click", (e) => {
             e.preventDefault();
             const formData = new FormData(formEl);
-            const data = Object.fromEntries(formData.entries());
             formData.set("id", id);
+            const data = Object.fromEntries(formData.entries());
             formEl.dispatchEvent(
                new CustomEvent("report", {
                   bubbles: true,

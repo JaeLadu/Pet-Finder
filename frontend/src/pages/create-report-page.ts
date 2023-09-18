@@ -114,7 +114,7 @@ function initCreateReportPage() {
             formData.forEach((value, key) => {
                data[key] = value.toString();
             });
-            const response = await state.reportPet(
+            const response = await state.createReport(
                data.dataURL,
                data.lat,
                data.lng,

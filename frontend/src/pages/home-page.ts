@@ -94,38 +94,30 @@ function initHomePage() {
          if (pets.length > 0) {
             pets.forEach(
                (pet: {
-                  imageUrl: string;
+                  id: number;
+                  imageURL: string;
                   name: string;
                   area: string;
                   owned: boolean;
                }) => {
                   const petCardEl = document.createElement("pet-card-comp");
-                  petCardEl.setAttribute("img", pet.imageUrl);
+                  petCardEl.setAttribute("img", pet.imageURL);
                   petCardEl.setAttribute("name", pet.name);
+                  petCardEl.setAttribute("id", JSON.stringify(pet.id));
                   petCardEl.setAttribute("location", pet.area);
                   if (pet.owned)
                      petCardEl.setAttribute("own", JSON.stringify(pet.owned));
 
-                  petCardEl.addEventListener("petCardEdit", (e) => {
-                     //sin terminar
-                     console.log("Debe ir a /editreport");
-                  });
-
-                  //sin terminar
-                  //esto tiene pinta de no estar bien revisar
                   petCardEl.addEventListener(
                      "petCardReport",
                      (e: CustomEventInit) => {
                         const report = document.createElement("report-comp");
                         report.setAttribute("pet", pet.name);
+                        report.setAttribute("id", JSON.stringify(pet.id));
                         report.addEventListener(
                            "report",
                            (e: CustomEventInit) => {
-                              console.log(
-                                 `data a mandar al backend para guardar: ${JSON.stringify(
-                                    e.detail
-                                 )}`
-                              );
+                              state.reportPet(e.detail);
                            }
                         );
                         petCardscontainerEl.append(report);

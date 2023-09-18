@@ -63,13 +63,33 @@ const state = {
       );
    },
    async getPetsInArea() {
-      const location = this.data.userData.location;
-      const response = await fetch(
+      const userData = this.getUserData();
+      const location = userData.location;
+
+      //trae todos los reports cercanos al area donde se encuentra el usuario
+      const reportsResponse = await fetch(
          `${backendUrl}/reports/location?lat=${location.lat}&lng=${location.lng}`
       );
-      const data = await response.json();
-      this.data.petsInArea = data;
-      return data;
+      const reportsData = await reportsResponse.json();
+
+      //Usa los datos que devolvió el backend para crear el objeto que necesita devolverle al front
+      return await Promise.all(
+         await reportsData.map(async (report: any) => {
+            //Usa mapbox para obtener el nombre de la ciudad usando las coordenadas
+            const areaResponse = await fetch(
+               `https://api.mapbox.com/geocoding/v5/mapbox.places/${report.lng},${report.lat}.json?access_token=pk.eyJ1IjoiamFlbGFkdSIsImEiOiJjbGpsbXB4NzEwMmNtM2VuaTFnaWVpOXNhIn0.izRPV_1_x5v_347iKQPD3A`
+            );
+            const areaData = await areaResponse.json();
+
+            return {
+               id: report.id,
+               name: report.name,
+               imageURL: report.imageUrl,
+               area: areaData.features[2].place_name,
+               owned: false,
+            };
+         })
+      );
    },
    async signup(mail: string, password: string) {
       try {
@@ -117,7 +137,7 @@ const state = {
    closeSession() {
       this.setUserData({ mail: "", token: "" });
    },
-   async reportPet(dataURL: string, lat: string, lng: string, name: string) {
+   async createReport(dataURL: string, lat: string, lng: string, name: string) {
       const userData = this.getUserData();
       const reportsData = { dataURL, lat, lng, name };
       const response = await fetch(`${backendUrl}/report`, {
@@ -130,6 +150,21 @@ const state = {
       });
       const data = await response.json();
       return data;
+   },
+   async reportPet(data: {
+      id: string;
+      message: string;
+      phone: number;
+      name: string;
+   }) {
+      const response = await fetch(`${backendUrl}/report/${data.id}`, {
+         method: "POST",
+         headers: {
+            "Content-Type": "application/json",
+         },
+         body: JSON.stringify(data),
+      });
+      return response.ok;
    },
 };
 export { state };
