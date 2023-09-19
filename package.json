@@ -5,8 +5,8 @@
    "scripts": {
       "dev:front": "parcel serve ./frontend/src/index.html",
       "dev:back": "nodemon -w ./backend/src -x ts-node ./backend/src/dev.ts",
-      "build": "parcel build ./frontend/src/index.html --dist-dir ./frontend/dist && tsc --outDir ./backend/dist",
-      "start": "node ./backend/dist/backend/src/index.js"
+      "build": "parcel build ./frontend/src/index.html --dist-dir ./dist && tsc --outDir ./dist",
+      "start": "node ./dist/backend/src/index.js"
    },
    "dependencies": {
       "@sendgrid/mail": "^7.7.0",
