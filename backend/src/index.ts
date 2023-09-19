@@ -29,6 +29,7 @@ app.use(cors());
 //Convierte la contraseña que se envía en el body en un hash
 function encrypPassword(req: Request, res: Response, next: NextFunction) {
    const { password } = req.body;
+
    try {
       const hashed = crypto
          .createHash("sha256")
@@ -212,9 +213,35 @@ app.post("/auth/signin", encrypPassword, async (req, res) => {
 
 //Editar contraseña
 app.patch("/auth", checkToken, encrypPassword, async (req, res) => {
+   //bloque necesario para encriptar la contraseña nueva antes de mandarla al backend
+   const { newPassword } = req.body;
+   try {
+      const hashed = crypto
+         .createHash("sha256")
+         .update(JSON.stringify(newPassword))
+         .digest("hex");
+
+      req.body.newPassword = hashed;
+   } catch (error) {
+      res.status(400).send({
+         message: "Something wrong with newPassword",
+         error: JSON.stringify(error),
+      });
+   }
+
+   //intenta modificar la contraseña
    const response = await updateUserPassword(req.body);
-   if (!response?.error) return res.send("Password change succesfull");
-   return res.status(400).send("Something went wrong");
+
+   if (!response?.passwordCheck)
+      return res.status(401).send({ message: "Password doesn't match" });
+
+   if (!response?.error)
+      return res.status(200).send({ message: "Password change succesfull" });
+
+   return res.status(400).send({
+      message: "Something went wrong",
+      error: JSON.stringify(response.error),
+   });
 });
 
 //-------------------------------------------------------------------------------------------------------------------------------------------

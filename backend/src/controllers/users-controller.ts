@@ -83,16 +83,26 @@ async function updateUserData(data: {
    }
 }
 
-async function updateUserPassword(data: { id: number; password: string }) {
+async function updateUserPassword(data: {
+   id: number;
+   password: string;
+   newPassword: string;
+}) {
    try {
       const auth = await Auth.findOne({
          where: { UserId: data.id },
          rejectOnEmpty: true,
       });
-      await auth?.update({ password: data.password });
-      return;
+      console.log(`data: ${data}`, `auth: ${auth.dataValues}`);
+
+      if (auth.dataValues.password == data.password) {
+         await auth?.update({ password: data.newPassword });
+         return { passwordCheck: true };
+      } else {
+         return { passwordCheck: false };
+      }
    } catch (error) {
-      return { error: error };
+      return { passwordCheck: true, error: error };
    }
 }
 

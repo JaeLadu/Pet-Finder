@@ -176,5 +176,22 @@ const state = {
       });
       return response.ok;
    },
+
+   async changePassword(password: string, newPassword: string) {
+      const userData = this.getUserData();
+      const response = await fetch(`${backendUrl}/auth/`, {
+         method: "PATCH",
+         headers: {
+            "Content-Type": "application/json",
+            Authorization: `bearer ${userData.token}`,
+         },
+         body: JSON.stringify({ password, newPassword }),
+      });
+      debugger;
+      if (response.status == 401) return { passwordCheck: false };
+      else if (response.status == 400)
+         return { passwordCheck: true, error: true };
+      else return { passwordCheck: true, error: false };
+   },
 };
 export { state };
