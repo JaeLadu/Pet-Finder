@@ -14,6 +14,8 @@ function initProfilePage() {
          }
       }
       connectedCallback() {
+         const userData = state.getUserData();
+
          const headerEl = document.createElement("header-comp");
 
          const containerEl = document.createElement("div");
@@ -38,11 +40,15 @@ function initProfilePage() {
          });
 
          const userEmailEl = document.createElement("body-text-comp");
-         //sin terminar //modificar
-         userEmailEl.setAttribute("text", "email@email.com"); //get user email from state
+         userEmailEl.setAttribute("text", `${userData.mail}`);
 
          const signoutEl = document.createElement("link-comp");
-         signoutEl.setAttribute("text", "Cerrar sesión"); //falta agregar funcionalidad
+         signoutEl.setAttribute("text", "Cerrar sesión");
+         signoutEl.addEventListener("click", (e) => {
+            e.preventDefault();
+            state.closeSession();
+            Router.go("/");
+         });
 
          const styleEl = document.createElement("style");
          styleEl.textContent = /*css*/ `

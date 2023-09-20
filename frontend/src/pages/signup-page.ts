@@ -44,17 +44,47 @@ function initSignUpPage() {
          buttonEl.setAttribute("text", "Registrarme");
          buttonEl.setAttribute("text-color", "#fff");
          buttonEl.addEventListener("click", async (e) => {
-            //sin terminar
-            //falta checkeo de password
             e.preventDefault();
             const formData = new FormData(formEl);
-            const data = Object.fromEntries(formData.entries());
-            const response = await state.signup(
-               Object(data).mail,
-               Object(data).password
-            );
-            if (response.ok) Router.go(targetPage);
-            else console.log(response.error);
+            const data: any = {};
+            formData.forEach((value, key) => {
+               data[key] = value.toString();
+            });
+
+            const inputEls = formEl.querySelectorAll("input");
+
+            //elimina cualquier mensaje y clases de error previos
+            clearErrorEls(formEl);
+
+            const errorMesageEl = document.createElement("span");
+            errorMesageEl.classList.add("error-message");
+            errorMesageEl.style.color = "red";
+
+            //checkeo de coincidencia de contraseña nueva
+            if (data.password != data.passwordCheck) {
+               errorMesageEl.textContent = "Las contraseñas no coinciden";
+               inputEls[1].classList.add("error");
+               inputEls[2].classList.add("error");
+               inputEls[2].after(errorMesageEl);
+            } else {
+               const response = await state.signup(data.mail, data.password);
+               debugger;
+               if (response.ok) {
+                  //Si todo salió ok
+                  errorMesageEl.textContent = "Usuario creado";
+                  errorMesageEl.style.color = "green";
+                  formEl.after(errorMesageEl);
+
+                  setTimeout(() => {
+                     Router.go(targetPage);
+                  }, 2500);
+               } else {
+                  errorMesageEl.textContent = "Hubo un error inesperado";
+                  formEl.after(errorMesageEl);
+
+                  console.log(response.error);
+               }
+            }
          });
 
          const accountQuestionEl = document.createElement("body-text-comp");
@@ -96,6 +126,10 @@ function initSignUpPage() {
                text-transform: uppercase;
                padding: 10px;
             }
+            .error{
+               border: 2px solid red
+            }
+
 
          `;
 
@@ -110,6 +144,16 @@ function initSignUpPage() {
          this.append(headerEl, containerEl, styleEl);
       }
    }
+
    customElements.define("signup-page", SignUpPage);
 }
+
+function clearErrorEls(element: HTMLElement) {
+   const messageEls = element.querySelectorAll(".error-message");
+   const colorEls = element.querySelectorAll(".error");
+
+   messageEls.forEach((message) => message.remove());
+   colorEls.forEach((color) => color.classList.remove("error", "success"));
+}
+
 export { initSignUpPage };

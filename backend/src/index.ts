@@ -171,19 +171,22 @@ app.post("/auth/signup", encrypPassword, async (req, res) => {
          .send("information missing. Body must have mail and password");
 
    //crea el usuario
-   delete req.body.id;
-   await signUp(req.body);
+   const response = await signUp(req.body);
 
    //intenta crear el token
-   const tokenObject = await getToken(req.body);
+   try {
+      const tokenObject = await getToken(response.id);
 
-   //si todo sale ok y existe el token, lo devuelve
-   if (tokenObject.token) return res.send({ token: tokenObject.token });
-   //Si no se encuentra el usuario en la DB
-   if (!tokenObject.auth)
-      return res.status(400).send({ message: "User not found" });
-   //Si hay otro error, devuelve el objeto con toda la info
-   return res.status(400).send(tokenObject);
+      //si todo sale ok y existe el token, lo devuelve
+      if (tokenObject.token) return res.send({ token: tokenObject.token });
+      //Si no se encuentra el usuario en la DB
+      if (!tokenObject.auth)
+         return res.status(400).send({ message: "User not found" });
+      //Si hay otro error, devuelve el objeto con toda la info
+      return res.status(400).send(tokenObject);
+   } catch (error) {
+      return { message: "unexpected error", error: JSON.stringify(error) };
+   }
 });
 
 //-------------------------------------------------------------------------------------------------------------------------------------------
@@ -263,7 +266,7 @@ app.patch("/user", checkToken, async (req, res) => {
    return res.status(400).send("User not found");
 });
 
-//TERMINAR cambiar el nombre de la carpeta que sirve por la que va a ser en producción
+//Mostrar frontend
 app.use(express.static("dist"));
 
 app.get("*", (req, res) => {

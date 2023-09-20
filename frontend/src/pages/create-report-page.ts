@@ -83,6 +83,7 @@ function initCreateReportPage() {
          });
 
          //Map
+         //arreglar Se rompe la página cuando quiere cargar el mapa. Hay que buscar desde 0 que es
          let location = { lng: 0, lat: 0 };
          const mapContainerEl = document.createElement("div");
          mapContainerEl.id = "map";
@@ -203,7 +204,7 @@ function initCreateReportPage() {
          );
          containerEl.append(titleEl, instructionsEl, formEl);
          this.append(headerEl, containerEl, styleEl);
-         initMap(mapContainerEl);
+         // initMap(mapContainerEl);
       }
    }
    customElements.define("create-report-page", CreateReportPage);

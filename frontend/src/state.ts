@@ -187,11 +187,34 @@ const state = {
          },
          body: JSON.stringify({ password, newPassword }),
       });
-      debugger;
       if (response.status == 401) return { passwordCheck: false };
       else if (response.status == 400)
          return { passwordCheck: true, error: true };
       else return { passwordCheck: true, error: false };
+   },
+   async changeUserPersonalData(name: string, city: string) {
+      const token = this.getUserData()?.token;
+      const response = await fetch(`${backendUrl}/user`, {
+         method: "PATCH",
+         headers: {
+            "Content-type": "application/json",
+            Authorization: `bearer ${token}`,
+         },
+         body: JSON.stringify({ name, city }),
+      });
+      if (response.ok) return { ok: true };
+      else return { ok: false };
+   },
+   async getUserPersonalData() {
+      const token = this.getUserData()?.token;
+      const response = await fetch(`${backendUrl}/user`, {
+         method: "GET",
+         headers: {
+            Authorization: `bearer ${token}`,
+         },
+      });
+      const data = await response.json();
+      return data;
    },
 };
 export { state };
