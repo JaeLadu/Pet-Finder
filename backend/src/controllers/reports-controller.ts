@@ -158,6 +158,16 @@ async function reportPet(data: {
       return false;
    }
 }
+async function getReport(reportId: number) {
+   try {
+      const report = await sequelizeReports.findByPk(reportId, {
+         rejectOnEmpty: true,
+      });
+      return { report: report.dataValues };
+   } catch (error) {
+      return { message: "Something failed", error };
+   }
+}
 
 export {
    getReportsInArea,
@@ -165,4 +175,5 @@ export {
    updateReport,
    getUserReports,
    reportPet,
+   getReport,
 };

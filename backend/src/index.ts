@@ -1,6 +1,7 @@
 import express, { NextFunction, Request, Response, json } from "express";
 import {
    createReport,
+   getReport,
    getReportsInArea,
    getUserReports,
    reportPet,
@@ -78,7 +79,7 @@ app.get("/up", (req, res) => {
 
 //-------------------------------------------------------------------------------------------------------------------------------------------
 
-//Reportar mascota
+//Crear reporte
 app.post("/report", checkToken, async (req, res) => {
    //checkea la info del input
    const { id, dataURL, lat, lng } = req.body;
@@ -99,6 +100,18 @@ app.post("/report", checkToken, async (req, res) => {
    }
 });
 
+//-------------------------------------------------------------------------------------------------------------------------------------------
+app.get("/report/:reportId", async (req, res) => {
+   const { reportId } = req.params;
+   if (!reportId)
+      return res
+         .status(400)
+         .send("information missing. Request must have reporId in query");
+
+   const response = await getReport(Number(reportId));
+   if (response.report) res.send(response);
+   else res.status(400).send(response);
+});
 //-------------------------------------------------------------------------------------------------------------------------------------------
 
 //reportar una mascota

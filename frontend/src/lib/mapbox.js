@@ -2,19 +2,19 @@ import { state } from "../state";
 
 const MAPBOX_TOKEN = process.env.MAPBOX_ACCESS_TOKEN;
 
-function initMap(container) {
+function initMap(container, location) {
    const mapboxClient = new MapboxClient(MAPBOX_TOKEN);
    mapboxgl.accessToken = MAPBOX_TOKEN;
-   const userLocation = state.getUserData()?.location;
+   const targetLocation = location || state.getUserData()?.location;
 
    // inicia el mapa
    const map = new mapboxgl.Map({
       container: "map",
       style: "mapbox://styles/mapbox/streets-v12",
-      center: userLocation
-         ? [userLocation.lng, userLocation.lat]
+      center: targetLocation
+         ? [targetLocation.lng, targetLocation.lat]
          : [-63.954193, -36.252002],
-      zoom: 3.5,
+      zoom: location ? 12 : 3.5,
    });
 
    // agrega el buscador del mapa
@@ -54,6 +54,9 @@ function initMap(container) {
          })
       );
    });
+   if (location) {
+      marker.setLngLat([location.lng, location.lat]).addTo(map);
+   }
 }
 
 export { initMap };

@@ -161,6 +161,12 @@ const state = {
       const data = await response.json();
       return data;
    },
+   async getReport(reportId: number) {
+      const response = await fetch(`${backendUrl}/report/${reportId}`);
+      const data = await response.json();
+      if (response.ok) return { report: data.report };
+      else return data;
+   },
    async reportPet(data: {
       id: string;
       message: string;
@@ -192,6 +198,7 @@ const state = {
          return { passwordCheck: true, error: true };
       else return { passwordCheck: true, error: false };
    },
+
    async changeUserPersonalData(name: string, city: string) {
       const token = this.getUserData()?.token;
       const response = await fetch(`${backendUrl}/user`, {

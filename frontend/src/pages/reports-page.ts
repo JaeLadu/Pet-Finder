@@ -58,7 +58,6 @@ function initReportsPage() {
       };
 
       //página a renderizar si el usuario tiene uno o más reports
-      //terminar de modificar para que se renderice lo que corresponde
       reportsRender = async (
          reports: {
             id: number;
@@ -80,32 +79,10 @@ function initReportsPage() {
             petCardEl.setAttribute("name", report.name);
             petCardEl.setAttribute("id", JSON.stringify(report.id));
             petCardEl.setAttribute("location", report.area);
-            if (report.owned)
-               petCardEl.setAttribute("own", JSON.stringify(report.owned));
+            petCardEl.setAttribute("own", "true");
             petCardEl.addEventListener("petCardEdit", (e) => {
-               //sin terminar
-               //tengo que modificar la pagina de crear reporte para que tome el id que le paso en la barra de busqueda y muestre los datos de ese report
                Router.go(`/createreport?id=${JSON.stringify(report.id)}`);
             });
-
-            petCardEl.addEventListener(
-               "petCardReport",
-               (e: CustomEventInit) => {
-                  const reportEl = document.createElement("report-comp");
-                  reportEl.setAttribute("pet", report.name);
-                  reportEl.setAttribute("id", JSON.stringify(report.id));
-                  reportEl.addEventListener("report", (e: CustomEventInit) => {
-                     //sin terminar
-                     //falta crear el método en state para reportar la mascota al back
-                     console.log(
-                        `data a mandar al backend para guardar: ${JSON.stringify(
-                           e.detail
-                        )}`
-                     );
-                  });
-                  petCardscontainerEl.append(reportEl);
-               }
-            );
 
             petCardscontainerEl.append(petCardEl);
          });

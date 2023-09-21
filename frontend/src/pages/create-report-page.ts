@@ -1,5 +1,5 @@
 import { Router, RouterLocation } from "@vaadin/router";
-import Dropzone, { DropzoneFile } from "dropzone";
+import Dropzone from "dropzone";
 import { initMap } from "../lib/mapbox.js";
 import { state } from "../state.js";
 
@@ -16,7 +16,7 @@ function initCreateReportPage() {
          }
       }
 
-      connectedCallback() {
+      async connectedCallback() {
          const headerEl = document.createElement("header-comp");
 
          const containerEl = document.createElement("div");
@@ -31,11 +31,18 @@ function initCreateReportPage() {
             "Ingresá la siguiente información para realizar el reporte de la mascota"
          );
 
+         const id = location.search.split("=")[1];
+         let report;
+         if (id) {
+            report = (await state.getReport(Number(id))).report;
+         }
          const formEl = document.createElement("form");
          formEl.innerHTML = /*html*/ `
             <label>
                <caption-comp text='nombre'></caption-comp>
-               <input type="text" name="name">
+               <input type="text" name="name" placeholder="${
+                  report?.name ? report.name : ""
+               }">
             </label>
             `;
 
@@ -55,7 +62,7 @@ function initCreateReportPage() {
          const template = document.createElement("div");
          template.innerHTML = /*html*/ `
          <div>
-               <img class="prueba" data-dz-thumbnail>
+               <img style="width:100%" src="${report?.imageUrl}" data-dz-thumbnail>
                <button-comp color="red" text-color= "white" text="Eliminar" data-dz-remove></button-comp>
          </div>
          `;
@@ -74,6 +81,12 @@ function initCreateReportPage() {
          });
 
          let imageData: Dropzone.DropzoneFile;
+         if (report) {
+            dropzone.displayExistingFile(
+               { name: report.name, size: 12345 },
+               report.imageUrl
+            );
+         }
          dropzone.on("addedfile", (file) => {
             imageData = file;
             previewContainerEl.style.backgroundColor = "transparent";
@@ -84,14 +97,17 @@ function initCreateReportPage() {
 
          //Map
          //arreglar Se rompe la página cuando quiere cargar el mapa. Hay que buscar desde 0 que es
-         let location = { lng: 0, lat: 0 };
+         let mapLocation = {
+            lng: 0,
+            lat: 0,
+         };
          const mapContainerEl = document.createElement("div");
          mapContainerEl.id = "map";
          mapContainerEl.classList.add("map-container");
          mapContainerEl.addEventListener(
             "newlocation",
             (e: CustomEventInit) => {
-               location = { ...e.detail };
+               mapLocation = { ...e.detail };
             }
          );
 
@@ -112,8 +128,8 @@ function initCreateReportPage() {
             e.preventDefault();
             const formData = new FormData(formEl);
             formData.append("dataURL", imageData.dataURL || "");
-            formData.append("lat", JSON.stringify(location.lat));
-            formData.append("lng", JSON.stringify(location.lng));
+            formData.append("lat", JSON.stringify(mapLocation.lat));
+            formData.append("lng", JSON.stringify(mapLocation.lng));
             const data: any = {};
             formData.forEach((value, key) => {
                data[key] = value.toString();
@@ -204,7 +220,11 @@ function initCreateReportPage() {
          );
          containerEl.append(titleEl, instructionsEl, formEl);
          this.append(headerEl, containerEl, styleEl);
-         // initMap(mapContainerEl);
+         if (report) {
+            initMap(mapContainerEl, { lat: report.lat, lng: report.lng });
+         } else {
+            initMap(mapContainerEl);
+         }
       }
    }
    customElements.define("create-report-page", CreateReportPage);
