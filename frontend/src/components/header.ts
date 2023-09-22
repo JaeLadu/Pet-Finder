@@ -11,7 +11,7 @@ function initHeader() {
 
          const headerLogoEl = document.createElement("img");
          headerLogoEl.src =
-            "http://res.cloudinary.com/dxdihjprh/image/upload/v1688484624/pet-finder/bsydcroe9uzsunuxbou0.png";
+            "https://res.cloudinary.com/dxdihjprh/image/upload/v1688484624/pet-finder/bsydcroe9uzsunuxbou0.png";
          headerLogoEl.addEventListener("click", (e) => {
             Router.go("/");
          });

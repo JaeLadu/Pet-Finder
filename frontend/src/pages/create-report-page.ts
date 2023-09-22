@@ -142,7 +142,6 @@ function initCreateReportPage() {
             );
 
             if (response.reportId) {
-               console.log(response.message);
                Router.go("/reports");
             }
          });

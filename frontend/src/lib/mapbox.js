@@ -10,7 +10,7 @@ function initMap(container, location) {
    // inicia el mapa
    const map = new mapboxgl.Map({
       container: "map",
-      style: "mapbox://styles/mapbox/streets-v12",
+      style: "mapbox://styles/mapbox/streets-v11",
       center: targetLocation
          ? [targetLocation.lng, targetLocation.lat]
          : [-63.954193, -36.252002],
