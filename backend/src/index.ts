@@ -17,12 +17,13 @@ import {
 import crypto from "crypto";
 import jwt from "jsonwebtoken";
 import cors from "cors";
+import path from "path";
 
 const app = express();
 const port = process.env.BACK_PORT || 3000;
 const environment = process.env.ENVIRONMENT;
 const SECRET = process.env.JWT_SECRET;
-const ROOT_PATH = __dirname.replace("backend/src", "");
+const ROOT_PATH = __dirname.replace("/dist/backend/", "");
 
 //Middleware
 app.use(json());
@@ -280,11 +281,7 @@ app.patch("/user", checkToken, async (req, res) => {
 });
 
 //Mostrar frontend
-app.use(express.static("dist"));
-
-app.get("*", (req, res) => {
-   res.sendFile(ROOT_PATH + "dist/index.html");
-});
+app.use(express.static("dist/"));
 
 app.listen(port, () => {
    console.log(`Server up and running in ${environment} mode in port ${port}`);

@@ -1,5 +1,5 @@
 import { Router, RouterLocation } from "@vaadin/router";
-import Dropzone from "dropzone";
+import Dropzone, { DropzoneFile } from "dropzone";
 import { initMap } from "../lib/mapbox.js";
 import { state } from "../state.js";
 
@@ -62,12 +62,13 @@ function initCreateReportPage() {
          const template = document.createElement("div");
          template.innerHTML = /*html*/ `
          <div>
-               <img style="width:100%" src="${report?.imageUrl}" data-dz-thumbnail>
+            <img style="width:100%" src="${report?.imageUrl}" data-dz-thumbnail>
                <button-comp color="red" text-color= "white" text="Eliminar" data-dz-remove></button-comp>
          </div>
          `;
 
          //dropzone config
+
          const dropzone = new Dropzone(formEl, {
             url: "/",
             autoProcessQueue: false,
@@ -79,7 +80,6 @@ function initCreateReportPage() {
             thumbnailMethod: "contain",
             addRemoveLinks: true,
          });
-
          let imageData: Dropzone.DropzoneFile;
          if (report) {
             dropzone.displayExistingFile(
@@ -96,7 +96,6 @@ function initCreateReportPage() {
          });
 
          //Map
-         //arreglar Se rompe la página cuando quiere cargar el mapa. Hay que buscar desde 0 que es
          let mapLocation = {
             lng: 0,
             lat: 0,
@@ -219,6 +218,7 @@ function initCreateReportPage() {
          );
          containerEl.append(titleEl, instructionsEl, formEl);
          this.append(headerEl, containerEl, styleEl);
+
          if (report) {
             initMap(mapContainerEl, { lat: report.lat, lng: report.lng });
          } else {
