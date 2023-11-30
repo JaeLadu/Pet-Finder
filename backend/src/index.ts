@@ -94,6 +94,8 @@ app.post("/report", checkToken, async (req, res) => {
    delete req.body.id;
    //crea el reporte y lo devuelve
    try {
+      console.log(req.body);
+
       const response = await createReport(req.body);
       res.send(response);
    } catch (error) {

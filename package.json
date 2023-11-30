@@ -5,6 +5,7 @@
    "scripts": {
       "dev:front": "parcel serve ./frontend/src/index.html",
       "dev:back": "nodemon -w ./backend/src -x ts-node ./backend/src/dev.ts",
+      "dev": "yarn dev:front && yarn dev:back",
       "build": "parcel build frontend/src/index.html --no-optimize && tsc --outDir dist/backend/",
       "start": "node ./dist/backend/index.js"
    },

@@ -28,6 +28,9 @@ async function getReportsInArea(location: Area) {
       aroundRadius: 5000,
    });
 
+   console.log(location);
+   console.log(data);
+
    const elephantIDs = data.hits.map((hit) => hit.elephantID);
 
    const reports = await sequelizeReports.findAll({
@@ -97,6 +100,16 @@ async function updateReport(reportId: number, report: SequelizeReport) {
       });
       response.owner = oldReport?.dataValues.UserId == report.UserId;
       if (!response.owner) return response;
+
+      //guarda la imágen en cloudinary, obtiene el url de la imágen y edita el objeto
+      if (report.dataURL) {
+         const imageUrl = (await cloudinary.uploader.upload(report.dataURL))
+            .url;
+         report.imageUrl = imageUrl;
+         delete report.dataURL;
+      } else {
+         throw new Error("Falta dataURL");
+      }
 
       //después actualiza el report
       const updated = await oldReport?.update(report);

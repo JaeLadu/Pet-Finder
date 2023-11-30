@@ -12,6 +12,8 @@ function initHomePage() {
 
          //chequea si hay info sobre la ubicación del usuario, si hay, renderiza una página, sino otra
          const location = state.getUserData()?.location;
+         console.log(location);
+
          if (location) this.locationRender();
          else this.defaultRender();
       }
