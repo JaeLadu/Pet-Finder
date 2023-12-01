@@ -137,9 +137,14 @@ app.patch("/report/:reportId", checkToken, async (req, res) => {
    delete req.body.id;
    //Intenta hacer el update
    const response = await updateReport(Number(reportId), req.body);
-   if (response.error) return res.status(400).send("Something went wrong");
-   if (!response.owner) return res.status(403).send("Not your report!");
-   if (response.updated) return res.send("Report updated");
+   if (response.error)
+      return res
+         .status(400)
+         .send({ ...response, message: "Something went wrong" });
+   if (!response.owner)
+      return res.status(403).send({ ...response, message: "Not your report!" });
+   if (response.updated)
+      return res.send({ ...response, message: "Report updated" });
    else return res.json(response);
 });
 
@@ -253,10 +258,14 @@ app.patch("/auth", checkToken, encrypPassword, async (req, res) => {
    const response = await updateUserPassword(req.body);
 
    if (!response?.passwordCheck)
-      return res.status(401).send({ message: "Password doesn't match" });
+      return res
+         .status(401)
+         .send({ ...response, message: "Password doesn't match" });
 
    if (!response?.error)
-      return res.status(200).send({ message: "Password change succesfull" });
+      return res
+         .status(200)
+         .send({ ...response, message: "Password change succesfull" });
 
    return res.status(400).send({
       message: "Something went wrong",
