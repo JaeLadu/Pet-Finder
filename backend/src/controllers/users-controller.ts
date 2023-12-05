@@ -5,6 +5,8 @@ import jwt from "jsonwebtoken";
 const SECRET = process.env.JWT_SECRET;
 //crea un usuario
 async function signUp(data: { mail: string; password: string }) {
+   console.log(`data que le llega a sigup: ${JSON.stringify(data)}`);
+
    try {
       //intenta encontrar o crea un nuevo auth
       const [auth, created] = await Auth.findOrCreate({ where: data });
@@ -14,17 +16,21 @@ async function signUp(data: { mail: string; password: string }) {
          const user = await User.create();
          await auth.update({ UserId: user.dataValues.id });
 
-         return { message: `New User created`, id: auth.dataValues.userId };
+         return { message: `New User created`, id: auth.dataValues.UserId };
       }
       // si el usuario ya existía, devuelve el id que obtuvo del mismo
       return { message: `User already existed`, id: auth.dataValues.UserId };
    } catch (error) {
+      console.log("Entró en el error del try de signup");
+
       return { message: "Something went wrong", error: JSON.stringify(error) };
    }
 }
 
 //busca el registro auth que contenga el mail y pass pasados como parámetros. Si encuentra uno, usa su userId para crear el token y lo devuelve
 async function getToken(data: { mail: string; password: string }) {
+   console.log(`Data que le llega a getToken: ${(data.mail, data.password)}`);
+
    const response = {
       message: "Something went wrong",
       secret: false,
@@ -42,6 +48,8 @@ async function getToken(data: { mail: string; password: string }) {
          where: { ...data },
          rejectOnEmpty: true,
       });
+
+      console.log(`Auth: ${JSON.stringify(auth)}`);
 
       if (auth == null) {
          response.secret = true;

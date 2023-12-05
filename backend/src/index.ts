@@ -193,10 +193,15 @@ app.post("/auth/signup", encrypPassword, async (req, res) => {
 
    //crea el usuario
    const response = await signUp(req.body);
+   console.log(
+      JSON.stringify(
+         `response de signup en endpoint ${JSON.stringify(response)}`
+      )
+   );
 
    //intenta crear el token
    try {
-      const tokenObject = await getToken(response.id);
+      const tokenObject = await getToken({ mail, password });
 
       //si todo sale ok y existe el token, lo devuelve
       if (tokenObject.token) return res.send({ token: tokenObject.token });
